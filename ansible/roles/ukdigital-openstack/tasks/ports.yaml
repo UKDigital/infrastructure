@@ -1,0 +1,169 @@
+---
+# Copyright (c) 2017, Secnix Systems
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# DMZ ports
+- name: Create a port for the golden host
+  os_port:
+    state: present
+    name: dmzport11
+    network: dmz
+    fixed_ips:
+      - ip_address: 10.100.254.11
+    security_groups:
+      - vpn
+      - external_ssh
+      - remote_repositories
+
+- name: Create ports for the external nameservers
+  os_port:
+    state: present
+    name: dmzport2{{ item }}
+    network: dmz
+    fixed_ips:
+      - ip_address: 10.100.254.2{{ item }}
+    security_groups:
+      - remote_repositories
+      - remote_dns
+  with_sequence: start=1 count=2
+
+# MGMT ports
+- name: Create ports for the IPA servers
+  os_port:
+    state: present
+    name: mgmtport1{{ item }}
+    network: mgmt
+    fixed_ips:
+      - ip_address: 10.100.100.1{{ item }}
+    security_groups:
+      - mgmt_nodes
+      - ipa_server
+      - remote_repositories
+  with_sequence: count=2
+
+- name: Create ports for the monitoring servers
+  os_port:
+    state: present
+    name: mgmtport1{{ item }}
+    network: mgmt
+    fixed_ips:
+      - ip_address: 10.100.100.1{{ item }}
+    security_groups:
+      - mgmt_nodes
+      - internal_monitoring
+      - remote_repositories
+  with_sequence: start=5 count=2
+
+- name: Create private network ports for the monitoring servers
+  os_port:
+    state: present
+    name: mtrport1{{ item }}
+    network: mtr
+    fixed_ips:
+      - ip_address: 172.17.1.1{{ item }}
+    security_groups:
+      - private_monitoring
+  with_sequence: start=5 count=2
+
+# Load Balancer (HAProxy) ports
+- name: Create app load balancer ports 
+  os_port:
+    state: present
+    name: appport0{{ item }}
+    network: app
+    fixed_ips:
+      - ip_address: 10.100.1.{{ item }}
+    security_groups:
+      - app_loadbalancer_nodes
+      - app_nodes
+      - remote_repositories
+  with_sequence: start=5 count=2
+
+- name: Create svc load balancer ports
+  os_port:
+    state: present
+    name: svcport0{{ item }}
+    network: svc
+    fixed_ips:
+      - ip_address: 10.100.20.{{ item }}
+    security_groups:
+      - svc_loadbalancer_nodes
+      - svc_nodes
+      - remote_repositories
+  with_sequence: start=5 count=2
+
+# APP ports
+- name: Create a port for the app OpenShift master
+  os_port:
+    state: present
+    name: appport2{{ item }}
+    network: app
+    fixed_ips:
+      - ip_address: 10.100.1.2{{ item }}
+    security_groups:
+      - app_nodes
+      - remote_repositories
+      - app_openshift_master
+  with_sequence: count=3
+
+- name: Create a port for the app OpenShift nodes
+  os_port:
+    state: present
+    name: appport5{{ item }}
+    network: app
+    fixed_ips:
+      - ip_address: 10.100.1.5{{item }}
+    security_groups:
+      - app_nodes
+      - remote_repositories
+      - app_openshift_node
+  with_sequence: count=2
+
+# SVC ports
+- name: Create a port for the svc OpenShift master
+  os_port:
+    state: present
+    name: svcport2{{ item }}
+    network: svc
+    fixed_ips:
+      - ip_address: 10.100.20.2{{ item }}
+    security_groups:
+      - svc_nodes
+      - remote_repositories
+      - svc_openshift_master
+  with_sequence: count=3
+
+- name: Create a port for the svc OpenShift nodes
+  os_port:
+    state: present
+    name: svcport5{{ item }}
+    network: svc
+    fixed_ips:
+      - ip_address: 10.100.20.5{{ item }}
+    security_groups:
+      - svc_nodes
+      - remote_repositories
+      - svc_openshift_node
+  with_sequence: count=2

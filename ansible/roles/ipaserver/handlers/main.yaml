@@ -1,0 +1,5 @@
+---
+# Copyright (c) 2017, Secnix Systems
+
+- name: reload firewalld
+  command: firewall-cmd --reload

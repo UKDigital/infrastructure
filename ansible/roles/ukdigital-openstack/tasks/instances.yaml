@@ -1,0 +1,231 @@
+---
+# Copyright (c) 2017, Secnix Systems
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+- name: Create the remote access servers
+  os_server:
+    name: ukdigitalep01.{{ role_fqdn }}
+    image: rhel-7-CURRENT
+    flavor: t1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: yes
+    security_groups: 
+      - vpn
+      - external_ssh
+    nics:
+      - port-name: dmzport11
+    meta:
+      hostname: 'ukdigitalep01.{{ role_fqdn }}'
+
+- name: Create external dns master server
+  os_server:
+    name: 'ukdigitalns01.{{ role_fqdn }}'
+    image: rhel-7-CURRENT
+    flavor: t1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    security_groups:
+      - remote_repositories
+      - remote_dns
+    nics:
+      - port-name: dmzport21
+    meta:
+      hostname: 'ukdigitalns01.{{ role_fqdn }}'
+      group: external_dns
+
+- name: Create external dns slave server
+  os_server:
+    name: 'ukdigitalns02.{{ role_fqdn }}'
+    image: rhel-7-CURRENT
+    flavor: t1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    security_groups:
+      - remote_repositories
+      - remote_dns
+    nics:
+      - port-name: dmzport22
+    meta:
+      hostname: 'ukdigitalns02.{{ role_fqdn }}'
+      group: external_dns
+
+- name: Create the monitoring server
+  os_server:
+    name: '{{ item.name }}'
+    availability_zone: '{{ item.az }}'
+    image: rhel-7-CURRENT
+    boot_from_volume: "{{ item.vol }}"
+    flavor: m1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    security_groups:
+      - internal_monitoring
+      - remote_repositories
+      - mgmt_nodes
+    nics:
+      - port-name: mgmtport1{{ item.count }}
+      - port-name: mtrport1{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+      group: internal_monitoring
+  with_items:
+    - { name: 'ukdigitalmtr01.{{ role_fqdn }}', vol: "mtr01", az: "0000c-1", count: 5 }
+    - { name: 'ukdigitalmtr02.{{ role_fqdn }}', vol: "mtr02", az: "0000c-2", count: 6 }
+
+- name: Create IPA servers
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel-7-CURRENT
+    boot_from_volume: "{{ item.vol }}"
+    flavor: t1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    security_groups:
+      - mgmt_nodes
+      - remote_repositories
+      - ipa_server
+    nics:
+      - port-name: mgmtport1{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+      group: internal_services
+  with_items:
+    - { name: 'ukdigitalipa01.{{ role_fqdn }}', az: "0000c-1", vol: "ipa01", count: 1 }
+    - { name: 'ukdigitalipa02.{{ role_fqdn }}', az: "0000c-2", vol: "ipa02", count: 2 }
+
+- name: Create app OpenShift master instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel-7-CURRENT
+    boot_from_vol: "{{ item.vol }}"
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: appport2{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+      group: app_openshift_master
+  with_items:
+    - { name: 'ukdigitalaom01.{{ role_fqdn }}', az: "0000c-1", vol: "aom01", count: 1 }
+    - { name: 'ukdigitalaom02.{{ role_fqdn }}', az: "0000c-2", vol: "aom02", count: 2 }
+    - { name: 'ukdigitalaom03.{{ role_fqdn }}', az: "0000c-1", vol: "aom03", count: 3 }
+
+- name: Create app OpenShift node instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel-7-CURRENT
+    boot_from_vol: "{{ item.vol }}"
+    flavor: m1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: appport5{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+      group: app_openshift_node
+  with_items:
+    - { name: 'ukdigitalaon01.{{ role_fqdn }}', az: "0000c-1", vol: "aon01", count: 1 }
+    - { name: 'ukdigitalaon02.{{ role_fqdn }}', az: "0000c-2", vol: "aon02",count: 2 }
+
+- name: Create app haproxy instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel-7-CURRENT
+    boot_from_vol: "{{ item.vol }}"
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: appport0{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+      group: app_loadbalancer_nodes
+  with_items:
+    - { name: 'ukdigitalalb01.{{ role_fqdn }}', az: "0000c-1", vol: "alb01", count: 5 }
+    - { name: 'ukdigitalalb02.{{ role_fqdn }}', az: "0000c-2", vol: "alb02", count: 6 }
+
+- name: Create svc OpenShift master instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel-7-CURRENT
+    boot_from_vol: "{{ item.vol }}"
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport2{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+      group: svc_openshift_master
+  with_items:
+    - { name: 'ukdigitalsom01.{{ role_fqdn }}', az: "0000c-1", vol: "som01", count: 1 }
+    - { name: 'ukdigitalsom02.{{ role_fqdn }}', az: "0000c-2", vol: "som02", count: 2 }
+    - { name: 'ukdigitalsom03.{{ role_fqdn }}', az: "0000c-1", vol: "som03", count: 3 }
+
+- name: Create svc OpenShift node instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel-7-CURRENT
+    boot_from_vol: "{{ item.vol }}"
+    flavor: m1.medium
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport5{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+      group: svc_openshift_node
+  with_items:
+    - { name: 'ukdigitalson01.{{ role_fqdn }}', az: "0000c-1", vol: "son01", count: 1 }
+    - { name: 'ukdigitalson02.{{ role_fqdn }}', az: "0000c-2", vol: "son02", count: 2 }
+
+- name: Create svc haproxy instances
+  os_server:
+    name: "{{ item.name }}"
+    image: rhel-7-CURRENT
+    boot_from_vol: "{{ item.vol }}"
+    flavor: m1.small
+    key_name: justin_cook
+    timeout: 200
+    auto_ip: no
+    nics:
+      - port-name: svcport0{{ item.count }}
+    meta:
+      hostname: "{{ item.name }}"
+      group: svc_loadbalancer_nodes
+  with_items:
+    - { name: 'ukdigitalslb01.{{ role_fqdn }}', az: "0000c-1", vol: "slb01", count: 5 }
+    - { name: 'ukdigitalslb02.{{ role_fqdn }}', az: "0000c-2", vol: "slb02", count: 6 }

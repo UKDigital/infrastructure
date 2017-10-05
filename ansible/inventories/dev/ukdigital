@@ -1,0 +1,81 @@
+---
+# Copyright (c) 2017, Secnix Systems
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[ukdigital-ras]
+ukdigitalep01.{{ domain_name }}.test ansible_host=10.100.254.11
+
+[ukdigital-ns]
+ukdigitalns01.{{ domain_name }}.test ansible_host=10.100.254.21 dnsrole=master
+ukdigitalns02.{{ domain_name }}.test ansible_host=10.100.254.22 dnsrole=slave
+
+[ukdigital-mgmt-ipa-masters]
+ukdigitalipa01.{{ domain_name }}.test ansible_host=10.100.100.11 iparole=master
+
+[ukdigital-mgmt-ipa-replicas]
+ukdigitalipa02.{{ domain_name }}.test ansible_host=10.100.100.12 iparole=replica
+
+[ukdigital-mgmt-ipa:children]
+ukdigital-mgmt-ipa-masters
+ukdigital-mgmt-ipa-replicas
+
+[ukdigital-app]
+ukdigitalalb01.{{ domain_name }}.test ansible_host=10.100.1.5 pxyrole=MASTER
+ukdigitalalb02.{{ domain_name }}.test ansible_host=10.100.1.6 pxyrole=BACKUP
+
+[ukdigital-mgmt-mtr]
+ukdigitalmtr01.{{ domain_name }}.test ansible_host=10.100.100.15
+ukdigitalmtr02.{{ domain_name }}.test ansible_host=10.100.100.16
+
+[ukdigital-app-openshift]
+ukdigitalaom01.{{ domain_name }}.test ansible_host=10.100.1.21
+ukdigitalaom02.{{ domain_name }}.test ansible_host=10.100.1.22
+ukdigitalaom03.{{ domain_name }}.test ansible_host=10.100.1.23
+ukdigitalaon01.{{ domain_name }}.test ansible_host=10.100.1.51
+ukdigitalaon02.{{ domain_name }}.test ansible_host=10.100.1.52
+
+[ukdigital-svc]
+ukdigitalslb01.{{ domain_name }}.test ansible_host=10.100.20.5
+ukdigitalslb02.{{ domain_name }}.test ansible_host=10.100.20.6
+
+[ukdigital-svc-openshift]
+ukdigitalsom01.{{ domain_name }}.test ansible_host=10.100.20.21
+ukdigitalsom02.{{ domain_name }}.test ansible_host=10.100.20.22
+ukdigitalsom03.{{ domain_name }}.test ansible_host=10.100.20.23
+ukdigitalson01.{{ domain_name }}.test ansible_host=10.100.20.51
+ukdigitalson02.{{ domain_name }}.test ansible_host=10.100.20.52
+
+[ukdigital:children]
+ukdigital-ras
+ukdigital-ns
+ukdigital-mgmt-ipa
+ukdigital-mgmt-mtr
+ukdigital-app
+ukdigital-app-openshift
+ukdigital-svc
+ukdigital-svc-openshift
+
+[ukdigital:vars]
+ansible_become=true

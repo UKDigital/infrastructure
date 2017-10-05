@@ -1,0 +1,108 @@
+---
+# Copyright (c) 2017, Secnix Systems
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+- name: Install git and bc
+  yum: name={{ item }} state=latest
+  with_items:
+    - git
+    - bc
+  when: pxyrole == 'MASTER'
+
+- name: Checkout Letsencrypt
+  git: repo=https://github.com/letsencrypt/letsencrypt.git
+       dest=/opt/letsencrypt
+  when: pxyrole == 'MASTER' and __DEVEL__ is undefined
+
+# HAProxy needs to be stopped as it listens on port 80 and this is needed for 
+# domain verification by Letsencrypt
+- name: Stop haproxy
+  service: name=haproxy state=stopped
+  notify:
+    - Enable and start haproxy
+
+- name: Fetch letsencrypt certificates
+  command: |
+    /opt/letsencrypt/letsencrypt-auto --standalone --agree-tos --force-renewal
+    certonly --preferred-challenges http-01 -d "{{ domains | join(",") }}"
+    creates=/etc/letsencrypt/live/{{ domains[0] }}/fullchain.pem
+  when: pxyrole == 'MASTER' and __DEVEL__ is undefined
+
+- name: Create letsencrypt live directory __DEVEL__
+  file:
+    path: /etc/letsencrypt/live/{{ domains[0] }}-0001
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+  when: pxyrole == 'MASTER' and __DEVEL__ is defined
+
+- name: Create letsencrypt certificates __DEVEL__
+  command: |
+    openssl req -new -newkey rsa:1024 -nodes -keyout \
+      /etc/letsencrypt/live/{{ domains[0] }}-0001/privkey.pem \
+      -out /etc/letsencrypt/live/{{ domains[0] }}-0001/fullchain.pem \
+      -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN={{ domains[0] }}"
+    creates=/etc/letsencrypt/live/{{ domains[0] }}/fullchain.pem
+  when: pxyrole == 'MASTER' and __DEVEL__ is defined
+
+- name: Create the cert directory
+  file:
+    path: /etc/haproxy/certs
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+
+- name: Create combined certfile
+  shell: |
+    cat /etc/letsencrypt/live/{{ domains[0] }}-0001/fullchain.pem \
+      /etc/letsencrypt/live/{{ domains[0] }}-0001/privkey.pem > \
+      /etc/haproxy/certs/{{ domains[0] }}.pem
+  args:
+    creates: /etc/haproxy/certs/{{ domains[0] }}.pem
+  when: pxyrole == 'MASTER'
+
+- name: Fetch the pem file from the master
+  fetch:
+    src: /etc/haproxy/certs/{{ domains[0] }}.pem
+    dest: /tmp/{{ domains[0] }}.pem
+    flat: yes
+  when: pxyrole == 'MASTER'
+
+- name: Copy the cert to slaves
+  copy: 
+    src: /tmp/{{ domains[0] }}.pem
+    dest: /etc/haproxy/certs/{{ domains[0] }}.pem
+    mode: 0600
+  when: pxyrole == 'BACKUP'
+
+- name: Restore SELinux contexts
+  sefcontext:
+    target: /etc/haproxy/certs/{{ domains[0] }}.pem
+    setype: etc_t
+    state: present 
+  when: pxyrole == 'BACKUP' and selinux_result.stdout == 'Enforcing'
+

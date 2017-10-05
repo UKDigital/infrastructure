@@ -1,0 +1,3 @@
+search {{ ipaserver_domain }}
+nameserver {{ hostvars['ukdigitalipa01.' ~ ipaserver_domain]['ansible_host'] }}
+nameserver {{ hostvars['ukdigitalipa02.' ~ ipaserver_domain]['ansible_host'] }}

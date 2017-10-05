@@ -1,0 +1,35 @@
+---
+
+- hosts: ukdigital-app
+  vars:
+    notification_email: lite-ops@digital.ukdigital.gov.uk
+    notification_email_from: lite-qa@digital.ukdigital.gov.uk
+    smtp_server: smtp-relay.gmail.com
+    vip: 10.100.1.7
+    domains:
+      - ukdigitalalb.licensing-qa.service.trade.gov.uk
+      - www.licensing-qa.service.trade.gov.uk
+  tasks:
+    - name: Check SELinux is running
+      command: getenforce
+      register: selinux_result
+
+    - debug: msg="{{ pxyrole }}"
+
+    - name: Restore SELinux contexts
+      command: >
+        echo Hooyah
+      when: selinux_result.stdout == "Enforcing" and pxyrole == 'BACKUP'
+      register: restorecon_result
+
+    - debug: msg={{ restorecon_result }}
+
+    - name: Test
+      command: > 
+        echo "-d {{ domains | join(",") }}"
+      register: test
+
+
+#  roles:
+#    - loadbalancer
+#  become: yes
