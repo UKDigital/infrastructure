@@ -1,0 +1,13 @@
+
+- hosts: localhost
+  roles:
+    - dfe-azure
+
+  vars_prompt:
+    - name: ad_user
+      prompt: Azure AD user
+      default: "user"
+    - name: ad_password
+      prompt: Azure AD password
+      default: 'pass'
+      private: yes

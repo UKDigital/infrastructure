@@ -1,0 +1,312 @@
+---
+
+- name: Create the remote access servers
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfep
+    vm_size: Standard_DS1_v2
+    capacity: 1
+    virtual_network_name: dmz
+    subnet_name: dmz1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
+
+#- name: Create the DNS servers
+#  azure_rm_virtualmachine_scaleset:
+#    ad_user: "{{ ad_user }}"
+#    password: "{{ ad_password }}"
+#    subscription_id: "{{ azure_subscription }}"
+##    location: "{{ azure_location }}"
+#    resource_group: "{{ azure_resource_group }}"
+#    tenant: "{{ azure_tenant_id }}"
+#    name: dnfep
+#    vm_size: Standard_DS1_v2
+#    capacity: 1
+#    virtual_network_name: dmz
+#    subnet_name: dmz1subnet
+#    admin_username: "cloud-user"
+#    ssh_password_enabled: false
+#    ssh_public_keys:
+#      - path: /home/cloud-user/.ssh/authorized_keys
+#        key_data: "{{ azure_deployment_public_key }}"
+#    managed_disk_type: Standard_LRS
+#    upgrade_policy: Manual
+#    image:
+#      publisher: RedHat
+#      offer: RHEL
+#      sku: 7.3
+#      version: latest
+#    data_disks:
+#      - lun: 0
+#        disk_size_gb: 64
+#        caching: ReadWrite
+#        managed_disk_type: Standard_LRS
+# TODO: Do we really want our own DNS here?
+
+- name: Create monitoring servers
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfmtr
+    vm_size: Standard_DS1_v2
+    capacity: 2
+    virtual_network_name: mtr
+    subnet_name: mtr1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
+
+- name: Create IPA servers
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfipa
+    vm_size: Standard_DS1_v2
+    capacity: 2
+    virtual_network_name: mgmt
+    subnet_name: mgmt1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
+
+- name: Create app OpenShift masters
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfaom
+    vm_size: Standard_DS1_v2
+    capacity: 3
+    virtual_network_name: app
+    subnet_name: app1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
+
+- name: Create app OpenShift nodes
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfaon
+    vm_size: Standard_DS1_v2
+    capacity: 2
+    virtual_network_name: app
+    subnet_name: app1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
+
+- name: Create app HAProxy instances
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfalb
+    vm_size: Standard_DS1_v2
+    capacity: 2
+    virtual_network_name: app
+    subnet_name: app1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
+
+- name: Create svc OpenShift masters
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfsom
+    vm_size: Standard_DS1_v2
+    capacity: 3
+    virtual_network_name: svc
+    subnet_name: svc1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
+
+- name: Create svc OpenShift nodes
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfson
+    vm_size: Standard_DS1_v2
+    capacity: 2
+    virtual_network_name: svc
+    subnet_name: svc1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
+
+- name: Create svc HAProxy instances
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfslb
+    vm_size: Standard_DS1_v2
+    capacity: 2
+    virtual_network_name: svc
+    subnet_name: svc1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: /home/cloud-user/.ssh/authorized_keys
+        key_data: "{{ azure_deployment_public_key }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 64
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS

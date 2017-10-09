@@ -1,0 +1,11 @@
+---
+
+- name: "Creating resource group {{ azure_resource_group }}"
+  azure_rm_resourcegroup:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+    location: "{{ azure_location }}"
+    name: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+  ignore_errors: yes  # This module is not idempotent if rg exists it fails

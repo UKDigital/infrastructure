@@ -1,0 +1,23 @@
+---
+# vars file for dfe-azure
+
+## AD user
+#ad_user: ""
+#ad_password: ""
+#
+## Azure service principal
+#azure_profile: ""
+#azure_tenant: ""
+#
+## Azure subscription
+#azure_subscription: ""
+#
+## Azure location
+#azure_location: ""
+#
+
+# OpenShift resource group
+azure_resource_group: "OpenShiftV36_{{ env }}"
+
+# load SSH public key
+azure_deployment_public_key: "{{ lookup('file', '../files/azuredeploy.pub') }}"

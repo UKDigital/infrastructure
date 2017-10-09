@@ -1,0 +1,20 @@
+---
+# defaults file for dfe-azure
+
+env: "dev"
+
+# Azure DNS
+azure_dns_rg: "dfetestrg"
+azure_dns_zone: "miracode.xyz"
+
+# Azure region
+azure_location: "North Europe"
+
+# Azure service principal TODO: This is missing
+azure_subscription: "58d88898-e823-4471-93fd-7b16a05b60e1"
+azure_tenant_id: "850fb0fa-1e38-4247-a17b-ec99f97f20e9"  # This should not be needed but Azure sucks
+
+# Azure user TODO: switch to service principal
+ad_user: "suchwowuser"
+ad_password: "suchwowpassword"
+

@@ -1,0 +1,19 @@
+---
+# This is some DNS checks
+
+- name: Provided user
+  debug:
+    var: ad_user
+
+- name: SSH pub key
+  debug:
+    var: azure_deployment_public_key
+
+
+- name: Get facts for the DNS zone (testing auth)
+  azure_rm_dnszone_facts:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+    resource_group: "{{ azure_dns_rg }}"
+    name: "{{ azure_dns_zone}}"
