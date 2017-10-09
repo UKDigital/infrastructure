@@ -1,0 +1,19 @@
+---
+# defaults file for ukdigital-azure
+
+env: "dev"
+azure_credential_profile: default  # This relates to ~/.azure/credentials section name
+
+# Azure DNS
+azure_dns_rg: ""
+azure_dns_zone: ""
+
+# Azure region
+azure_location: "UK South"
+
+azure_ssh_keys: []
+azure_machine_spec: {}
+
+azure_template_partial: false
+
+azure_check_mode: false
