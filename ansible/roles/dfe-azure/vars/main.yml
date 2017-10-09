@@ -19,5 +19,5 @@
 # OpenShift resource group
 azure_resource_group: "OpenShiftV36_{{ env }}"
 
-# load SSH public key
-azure_deployment_public_key: "{{ lookup('file', '../files/azuredeploy.pub') }}"
+# public keys
+azure_deployment_public_keys: []

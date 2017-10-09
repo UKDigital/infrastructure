@@ -1,5 +1,11 @@
 ---
 
+#- name: Check the authorized keys file
+#  debug:
+#    var: azure_deployment_public_key
+#  tags:
+#    - security
+
 - name: Create the remote access servers
   azure_rm_virtualmachine_scaleset:
     ad_user: "{{ ad_user }}"
@@ -15,9 +21,7 @@
     subnet_name: dmz1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
@@ -31,37 +35,36 @@
         caching: ReadWrite
         managed_disk_type: Standard_LRS
 
-#- name: Create the DNS servers
-#  azure_rm_virtualmachine_scaleset:
-#    ad_user: "{{ ad_user }}"
-#    password: "{{ ad_password }}"
-#    subscription_id: "{{ azure_subscription }}"
-##    location: "{{ azure_location }}"
-#    resource_group: "{{ azure_resource_group }}"
-#    tenant: "{{ azure_tenant_id }}"
-#    name: dnfep
-#    vm_size: Standard_DS1_v2
-#    capacity: 1
-#    virtual_network_name: dmz
-#    subnet_name: dmz1subnet
-#    admin_username: "cloud-user"
-#    ssh_password_enabled: false
-#    ssh_public_keys:
-#      - path: /home/cloud-user/.ssh/authorized_keys
-#        key_data: "{{ azure_deployment_public_key }}"
-#    managed_disk_type: Standard_LRS
-#    upgrade_policy: Manual
-#    image:
-#      publisher: RedHat
-#      offer: RHEL
-#      sku: 7.3
-#      version: latest
-#    data_disks:
-#      - lun: 0
-#        disk_size_gb: 64
-#        caching: ReadWrite
-#        managed_disk_type: Standard_LRS
+- name: Create the DNS servers
+  azure_rm_virtualmachine_scaleset:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+#    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dnfns
+    vm_size: Standard_DS1_v2
+    capacity: 2
+    virtual_network_name: dmz
+    subnet_name: dmz1subnet
+    admin_username: "cloud-user"
+    ssh_password_enabled: false
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
+    managed_disk_type: Standard_LRS
+    upgrade_policy: Manual
+    image:
+      publisher: RedHat
+      offer: RHEL
+      sku: 7.3
+      version: latest
+    data_disks:
+      - lun: 0
+        disk_size_gb: 5  # TODO: These large extra disks may not be needed for a DNS server
+        caching: ReadWrite
+        managed_disk_type: Standard_LRS
 # TODO: Do we really want our own DNS here?
+# TODO: This may have to be split to 2 fixed instances rather than a scaleset
 
 - name: Create monitoring servers
   azure_rm_virtualmachine_scaleset:
@@ -78,9 +81,7 @@
     subnet_name: mtr1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
@@ -109,9 +110,7 @@
     subnet_name: mgmt1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
@@ -140,9 +139,7 @@
     subnet_name: app1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
@@ -171,9 +168,7 @@
     subnet_name: app1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
@@ -202,9 +197,7 @@
     subnet_name: app1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
@@ -233,9 +226,7 @@
     subnet_name: svc1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
@@ -264,9 +255,7 @@
     subnet_name: svc1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
@@ -295,9 +284,7 @@
     subnet_name: svc1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
-    ssh_public_keys:
-      - path: /home/cloud-user/.ssh/authorized_keys
-        key_data: "{{ azure_deployment_public_key }}"
+    ssh_public_keys: "{{ azure_deployment_public_keys }}"
     managed_disk_type: Standard_LRS
     upgrade_policy: Manual
     image:
