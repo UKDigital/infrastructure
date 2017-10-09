@@ -1,0 +1,14 @@
+---
+# This is some DNS checks
+
+#- name: SSH pub key
+#  debug:
+#    var: azure_ssh_keys
+
+
+- name: Get facts for the DNS zone (testing auth)
+  azure_rm_dnszone_facts:
+    profile: "{{ azure_credential_profile }}"
+    resource_group: "{{ azure_dns_rg }}"
+    name: "{{ azure_dns_zone}}"
+  when: azure_dns_rg and azure_dns_zone

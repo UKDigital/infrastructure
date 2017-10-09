@@ -1,0 +1,22 @@
+{% macro public_ip(name, location) -%}
+    {
+        "name": "{{ name }}",
+        "type": "Microsoft.Network/publicIpAddresses",
+        "location": "{{ location }}",
+        "apiVersion": "2017-08-01",
+        "properties": {
+            "publicIpAllocationMethod": "Static"
+        },
+        "sku": {
+            "name": "Basic"
+        }
+    }
+{%- endmacro %}
+
+{% macro id_public_ip(name) -%}
+    {
+        "id": "[resourceId('Microsoft.Network/publicIpAddresses', '{{ name }}')]"
+    }
+{%- endmacro %}
+
+{% macro depends_public_ip(name) -%}"Microsoft.Network/publicIpAddresses/{{ name }}"{%- endmacro %}

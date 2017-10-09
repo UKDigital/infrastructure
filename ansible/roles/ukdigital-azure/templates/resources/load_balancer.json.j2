@@ -1,0 +1,80 @@
+{% macro load_balancer(name, location, ports, probes, depends_vnet, public_ip, id_public_ip='', depends_public_ip='', private_ip='', id_subnet='') -%}
+    {
+      "apiVersion": "2017-08-01",
+      "name": "{{ name }}",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "{{ location }}",
+{# Standard sku is preview and not available in the UK south region
+      "sku": {
+        "name": "Standard"
+      },
+#}
+      "dependsOn": [
+{% if public_ip %}
+        {{ depends_public_ip }},
+{% endif %}
+        {{ depends_vnet }}
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "FrontEnd",
+            "properties": {
+{% if not public_ip %}
+              "privateIPAllocationMethod": "Static",
+              "privateIpAddress": "{{ private_ip }}",
+              "subnet": {{ id_subnet }}
+{% else %}
+              "publicIPAddress": {{ id_public_ip }}
+{% endif %}
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "BackendPool"
+          }
+        ],
+        "inboundNatRules": [
+        ],
+        "loadBalancingRules": [
+{% for port_spec in ports %}
+          {
+            "name": "LBRule{{ loop.index }}",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', '{{ name }}'), '/frontendIPConfigurations/FrontEnd')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', '{{ name }}'), '/backendAddressPools/BackendPool')]"
+              },
+              "protocol": "{{ port_spec.protocol }}",
+              "frontendPort": {{ port_spec.frontend }},
+              "backendPort": {{ port_spec.backend }},
+              "enableFloatingIP": false,
+{% if port_spec.probe %}
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', '{{ name }}'), '/probes/{{ port_spec.probe }}')]"
+              },
+{% endif %}
+              "idleTimeoutInMinutes": 5
+            }
+          }{% if not loop.last %},{% endif %}
+{% endfor %}
+        ],
+        "probes": [
+{% for probe_spec in probes %}
+          {
+            "name": "{{ probe_spec.name }}",
+            "properties": {
+              "protocol": "{{ probe_spec.protocol }}",
+              "port": {{ probe_spec.port }},
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }{% if not loop.last %},{% endif %}
+{% endfor %}
+        ]
+      }
+    }
+{%- endmacro %}

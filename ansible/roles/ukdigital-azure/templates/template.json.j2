@@ -1,0 +1,194 @@
+{% import 'resources/public_ip.json.j2' as res_pip %}
+{% import 'resources/vnet.json.j2' as res_vnet %}
+{% import 'resources/load_balancer.json.j2' as res_lb %}
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {{ res_vnet.vnet('main', location=azure_location) }},
+
+{% for load_balancer_type, load_balancer_spec in azure_lb.items() %}
+
+{% if load_balancer_spec.public_ip %}
+        {{ res_pip.public_ip(load_balancer_type + 'pip', location=azure_location) }},
+{% endif %}
+
+        {{ res_lb.load_balancer(
+                name=load_balancer_type,
+                ports=load_balancer_spec.ports,
+                probes=load_balancer_spec.probes,
+                depends_vnet=res_vnet.depends_vnet('main'),
+                public_ip=load_balancer_spec.public_ip,
+                id_public_ip=res_pip.id_public_ip(load_balancer_type + 'pip'),
+                depends_public_ip=res_pip.depends_public_ip(load_balancer_type + 'pip'),
+                private_ip=load_balancer_spec.private_ip,
+                id_subnet=res_vnet.id_subnet('main', load_balancer_spec.subnet),
+                location=azure_location
+           )
+        }},
+
+{% endfor %}
+
+{% for machine_type, machine_spec in azure_machine_spec.items() %}
+
+        {
+            "name": "{{ machine_type }}nsg",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2017-06-01",
+            "location": "{{ azure_location }}",
+            "properties": {
+                "securityRules": {{ azure_nsg[machine_type] | to_nice_json(indent=4) }}
+            }
+        },
+
+        {
+          "type": "Microsoft.Compute/availabilitySets",
+          "name": "{{ machine_type }}AS",
+          "apiVersion": "2016-04-30-preview",
+          "location": "{{ azure_location }}",
+          "properties": {
+            "platformFaultDomainCount": "2",
+            "platformUpdateDomainCount": "2",
+            "managed": "true"
+          }
+        },
+
+{% for instance in machine_spec.instances %}
+
+{% for interface in instance.interfaces %}
+
+{% if interface.public_ip %}
+        {
+            "name": "{{ instance.hostname }}pip{{ loop.index }}",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2017-08-01",
+            "location": "{{ azure_location }}",
+            "properties": {
+                "publicIpAllocationMethod": "Static"
+            },
+            "sku": {
+                "name": "Basic"
+            }
+        },
+{% endif %}
+
+        {
+            "name": "{{ instance.hostname }}nic{{ loop.index }}",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2016-09-01",
+            "location": "{{ azure_location }}",
+            "dependsOn": [
+{% if 'load_balancer' in machine_spec and loop.first %}
+                "Microsoft.Network/loadBalancers/{{ machine_spec.load_balancer }}",
+{% endif %}
+                "Microsoft.Network/virtualNetworks/main",
+{% if interface.public_ip %}
+                "Microsoft.Network/publicIpAddresses/{{ instance.hostname }}pip{{ loop.index }}",
+{% endif %}
+                "Microsoft.Network/networkSecurityGroups/{{ machine_type }}nsg"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig{{ loop.index }}",
+                        "properties": {
+{% if 'load_balancer' in machine_spec and loop.first %}
+                            "loadBalancerBackendAddressPools": [
+                              {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', '{{ machine_spec.load_balancer }}'), '/backendAddressPools/BackendPool')]"
+                              }
+                            ],
+{% endif %}
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', 'main', '{{ interface.subnet }}')]"
+                            },
+                            "privateIPAllocationMethod": "Static",
+{% if interface.public_ip %}
+                            "publicIpAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', '{{ instance.hostname }}pip{{ loop.index }}')]"
+                            },
+{% endif %}
+                            "privateIpAddress": "{{ interface.ipv4 }}"
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', '{{ machine_type }}nsg')]"
+                }
+            }
+        },
+
+{% endfor %}
+
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "{{ instance.hostname }}",
+            "apiVersion": "2016-04-30-preview",
+            "location": "{{ azure_location }}",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "{{ machine_spec.size }}"
+                },
+                "osProfile": {
+                    "computerName": "{{ instance.hostname }}",
+                    "adminUsername": "cloud-user",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": {{ azure_ssh_keys | to_nice_json(indent=4) }}
+                        }
+                    },
+                    "secrets": []
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "caching": "ReadOnly",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    },
+                    "imageReference": {{ azure_os_choices[machine_spec.os] | to_nice_json(indent=4) }},
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "createOption": "Empty",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            },
+                            "diskSizeGB": {{ machine_spec.disk_size_gb }}
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+{%for interface in instance.interfaces %}
+                        {
+                            "properties": {
+                              "primary": {% if loop.index == 1 %}true{% else %}false{% endif %}
+                            },
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', '{{ instance.hostname }}nic{{ loop.index }}')]"
+                        }{% if not loop.last %},{% endif %}
+{% endfor %}
+                    ]
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', '{{ machine_type }}AS')]"
+                }
+            },
+            "dependsOn": [
+                "Microsoft.Compute/availabilitySets/{{ machine_type }}AS",
+{% for interface in instance.interfaces %}
+                "[resourceId('Microsoft.Network/networkInterfaces', '{{ instance.hostname }}nic{{ loop.index }}')]"{% if not loop.last %},{% endif %}
+{% endfor %}
+            ]
+        }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+{% if not loop.last %},{% endif %}
+{% endfor %}
+    ]
+}
