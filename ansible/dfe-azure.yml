@@ -6,8 +6,8 @@
   vars_prompt:
     - name: ad_user
       prompt: Azure AD user
-      default: "user"
+      default: "zoltan.kozma@cadenceinnova.com"
     - name: ad_password
       prompt: Azure AD password
-      default: 'pass'
+      default: 'boo'
       private: yes
