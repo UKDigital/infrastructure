@@ -1,40 +1,9 @@
 ---
-# tasks file for dfe-azure
 
 - include_tasks: dns.yml
 
-# Create Azure Resource Group
-- include_tasks: resourcegroup.yml
-  tags:
-    - resourcegroup
+- include_tasks: ansible_main.yml
+  when: not azure_use_resource_templates
 
-# Create the networks and attach subnets
-- include_tasks: networks.yml
-  tags:
-    - networks
-
-# Create the associated security groups for subnets and services
-- include: security.yml
-  tags:
-    - security
-
-## Create the ports to assign each instance to
-#- include: ports.yaml
-#  tags:
-#    - ports
-#
-## Create Cinder volumes
-#- include: volumes.yaml
-#  tags:
-#    - volumes
-#
-
-# Create scalesets
-- include: vm_scaleset.yml
-  tags:
-    - vm_scaleset
-
-## Create instances homed to specific subnets with attached security groups
-#- include: instances.yaml
-#  tags:
-#    - instances
+- include_tasks: template.yml
+  when: azure_use_resource_templates

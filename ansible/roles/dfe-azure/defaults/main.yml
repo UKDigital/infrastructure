@@ -18,3 +18,4 @@ azure_tenant_id: "850fb0fa-1e38-4247-a17b-ec99f97f20e9"  # This should not be ne
 ad_user: "suchwowuser"
 ad_password: "suchwowpassword"
 
+azure_use_resource_templates: true

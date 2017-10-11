@@ -1,0 +1,1182 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_mtr_name": {
+            "defaultValue": "mtr",
+            "type": "String"
+        },
+        "virtualNetworks_main_name": {
+            "defaultValue": "main",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfep_name": {
+            "defaultValue": "dnfep",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfns_name": {
+            "defaultValue": "dnfns",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfalb_name": {
+            "defaultValue": "dnfalb",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfaom_name": {
+            "defaultValue": "dnfaom",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfaon_name": {
+            "defaultValue": "dnfaon",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfipa_name": {
+            "defaultValue": "dnfipa",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfmtr_name": {
+            "defaultValue": "dnfmtr",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfslb_name": {
+            "defaultValue": "dnfslb",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfsom_name": {
+            "defaultValue": "dnfsom",
+            "type": "String"
+        },
+        "virtualMachineScaleSets_dnfson_name": {
+            "defaultValue": "dnfson",
+            "type": "String"
+        },
+        "subnets_mtr1subnet_name": {
+            "defaultValue": "mtr1subnet",
+            "type": "String"
+        },
+        "subnets_app1subnet_name": {
+            "defaultValue": "app1subnet",
+            "type": "String"
+        },
+        "subnets_svc1subnet_name": {
+            "defaultValue": "svc1subnet",
+            "type": "String"
+        },
+        "subnets_dmz1subnet_name": {
+            "defaultValue": "dmz1subnet",
+            "type": "String"
+        },
+        "subnets_mgmt1subnet_name": {
+            "defaultValue": "mgmt1subnet",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfalb'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfalb_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfalb_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 64
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfalb_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_app1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_app1subnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfaom'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 3
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfaom_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfaom_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 64
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfaom_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_app1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_app1subnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfaon'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfaon_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfaon_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 64
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfaon_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_app1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_app1subnet_name'))]"
+            ]
+        },
+        {
+            "name": "nsgep01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2017-06-01",
+            "location": "northeurope",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "priority": 1000,
+                            "protocol": "TCP",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "22"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "pipep01",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2017-08-01",
+            "location": "northeurope",
+            "properties": {
+                "publicIpAllocationMethod": "Static"
+            },
+            "sku": {
+                "name": "Basic"
+            }
+        },
+        {
+            "name": "nicep01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2016-09-01",
+            "location": "northeurope",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', 'main')]",
+                "[concat('Microsoft.Network/publicIpAddresses/', 'pipep01')]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', 'nsgep01')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_dmz1subnet_name'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', 'pipep01')]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsgep01')]"
+                }
+            }
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfep'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachineScaleSets_dnfep_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "osProfile": {
+                    "computerName": "dnfep01",
+                    "adminUsername": "cloud-user",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/cloud-user/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                },
+                                {
+                                    "path": "/home/cloud-user/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                }
+                            ]
+                        }
+                    },
+                    "secrets": []
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "caching": "ReadOnly",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    },
+                    "imageReference": {
+                        "publisher": "RedHat",
+                        "offer": "RHEL",
+                        "sku": "7.3",
+                        "version": "7.3.2017090723"
+                    },
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "createOption": "Empty",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            },
+                            "diskSizeGB": 64
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'nicep01')]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', 'nicep01')]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfipa'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfipa_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfipa_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 64
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfipa_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_mgmt1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_mgmt1subnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfmtr'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfmtr_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfmtr_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 64
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfmtr_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_mtr_name'), parameters('subnets_mtr1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_mtr_name'), parameters('subnets_mtr1subnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfns'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfns_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfns_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 5
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfns_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_dmz1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_dmz1subnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfslb'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfslb_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfslb_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 64
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfslb_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_svc1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_svc1subnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfsom'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 3
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfsom_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfsom_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 64
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfsom_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_svc1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_svc1subnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Compute/virtualMachineScaleSets/dnfson'.",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 2
+            },
+            "name": "[parameters('virtualMachineScaleSets_dnfson_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "singlePlacementGroup": true,
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('virtualMachineScaleSets_dnfson_name')]",
+                        "adminUsername": "cloud-user",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": true,
+                            "ssh": {
+                                "publicKeys": [
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+                                    },
+                                    {
+                                        "path": "/home/cloud-user/.ssh/authorized_keys",
+                                        "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+                                    }
+                                ]
+                            }
+                        },
+                        "secrets": []
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "FromImage",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "RedHat",
+                            "offer": "RHEL",
+                            "sku": "7.3",
+                            "version": "7.3.2017090723"
+                        },
+                        "dataDisks": [
+                            {
+                                "lun": 0,
+                                "createOption": "Empty",
+                                "caching": "ReadWrite",
+                                "managedDisk": {
+                                    "storageAccountType": "Standard_LRS"
+                                },
+                                "diskSizeGB": 64
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[parameters('virtualMachineScaleSets_dnfson_name')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "default",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_svc1subnet_name'))]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), parameters('subnets_svc1subnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Network/virtualNetworks/main'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_main_name')]",
+            "apiVersion": "2017-06-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "38ced6e4-3041-4658-ad57-b84835f5185d",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.100.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "app1subnet",
+                        "etag": "W/\"3a3ee666-f963-451a-8235-8cf3dae4d716\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.100.1.0/24"
+                        }
+                    },
+                    {
+                        "name": "mgmt1subnet",
+                        "etag": "W/\"3a3ee666-f963-451a-8235-8cf3dae4d716\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.100.100.0/24"
+                        }
+                    },
+                    {
+                        "name": "svc1subnet",
+                        "etag": "W/\"3a3ee666-f963-451a-8235-8cf3dae4d716\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.100.20.0/24"
+                        }
+                    },
+                    {
+                        "name": "dmz1subnet",
+                        "etag": "W/\"3a3ee666-f963-451a-8235-8cf3dae4d716\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.100.254.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Network/virtualNetworks/mtr'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_mtr_name')]",
+            "apiVersion": "2017-06-01",
+            "location": "northeurope",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "d8f043df-dde8-4e48-9dc4-72cd0e7dbcb7",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "172.17.1.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[concat(parameters('virtualNetworks_mtr_name'),'1subnet')]",
+                        "etag": "W/\"ff14c2d5-9d1c-4bc2-b7c5-d5fa592441c7\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "172.17.1.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Network/virtualNetworks/main/subnets/app1subnet'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_main_name'), '/', parameters('subnets_app1subnet_name'))]",
+            "apiVersion": "2017-06-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.100.1.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_main_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Network/virtualNetworks/main/subnets/mgmt1subnet'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_main_name'), '/', parameters('subnets_mgmt1subnet_name'))]",
+            "apiVersion": "2017-06-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.100.100.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_main_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Network/virtualNetworks/main/subnets/svc1subnet'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_main_name'), '/', parameters('subnets_svc1subnet_name'))]",
+            "apiVersion": "2017-06-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.100.20.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_main_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Network/virtualNetworks/main/subnets/dmz1subnet'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_main_name'), '/', parameters('subnets_dmz1subnet_name'))]",
+            "apiVersion": "2017-06-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.100.254.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_main_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Network/virtualNetworks/mtr/subnets/mtr1subnet'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_mtr_name'), '/', parameters('subnets_mtr1subnet_name'))]",
+            "apiVersion": "2017-06-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "172.17.1.0/24"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_mtr_name'))]"
+            ]
+        }
+    ]
+}

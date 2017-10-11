@@ -17,7 +17,9 @@
 #
 
 # OpenShift resource group
-azure_resource_group: "OpenShiftV36_{{ env }}"
+azure_resource_group: "OpenShiftV3_{{ env }}"
 
 # public keys
 azure_deployment_public_keys: []
+
+azure_template_file: "{{ lookup('file', 'roles/dfe-azure/files/template.json') }}"

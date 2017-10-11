@@ -17,7 +17,7 @@
     name: dnfep
     vm_size: Standard_DS1_v2
     capacity: 1
-    virtual_network_name: dmz
+    virtual_network_name: main
     subnet_name: dmz1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
@@ -46,7 +46,7 @@
     name: dnfns
     vm_size: Standard_DS1_v2
     capacity: 2
-    virtual_network_name: dmz
+    virtual_network_name: main
     subnet_name: dmz1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
@@ -106,7 +106,7 @@
     name: dnfipa
     vm_size: Standard_DS1_v2
     capacity: 2
-    virtual_network_name: mgmt
+    virtual_network_name: main
     subnet_name: mgmt1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
@@ -135,7 +135,7 @@
     name: dnfaom
     vm_size: Standard_DS1_v2
     capacity: 3
-    virtual_network_name: app
+    virtual_network_name: main
     subnet_name: app1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
@@ -164,7 +164,7 @@
     name: dnfaon
     vm_size: Standard_DS1_v2
     capacity: 2
-    virtual_network_name: app
+    virtual_network_name: main
     subnet_name: app1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
@@ -193,7 +193,7 @@
     name: dnfalb
     vm_size: Standard_DS1_v2
     capacity: 2
-    virtual_network_name: app
+    virtual_network_name: main
     subnet_name: app1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
@@ -222,7 +222,7 @@
     name: dnfsom
     vm_size: Standard_DS1_v2
     capacity: 3
-    virtual_network_name: svc
+    virtual_network_name: main
     subnet_name: svc1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
@@ -251,7 +251,7 @@
     name: dnfson
     vm_size: Standard_DS1_v2
     capacity: 2
-    virtual_network_name: svc
+    virtual_network_name: main
     subnet_name: svc1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false
@@ -280,7 +280,7 @@
     name: dnfslb
     vm_size: Standard_DS1_v2
     capacity: 2
-    virtual_network_name: svc
+    virtual_network_name: main
     subnet_name: svc1subnet
     admin_username: "cloud-user"
     ssh_password_enabled: false

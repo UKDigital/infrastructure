@@ -1,5 +1,5 @@
 
-- name: Create app network
+- name: Create main network
   azure_rm_virtualnetwork:
     ad_user: "{{ ad_user }}"
     password: "{{ ad_password }}"
@@ -7,8 +7,8 @@
     location: "{{ azure_location }}"
     resource_group: "{{ azure_resource_group }}"
     tenant: "{{ azure_tenant_id }}"
-    address_prefixes_cidr: "10.100.1.0/24"
-    name: app
+    address_prefixes_cidr: "10.100.0.0/16"
+    name: main
 
 - name: Create app1subnet subnet
   azure_rm_subnet:
@@ -18,20 +18,8 @@
     resource_group: "{{ azure_resource_group }}"
     tenant: "{{ azure_tenant_id }}"
     name: app1subnet
-    virtual_network_name: app
+    virtual_network_name: main
     address_prefix_cidr: "10.100.1.0/24"
-
-
-- name: Create mgmt network
-  azure_rm_virtualnetwork:
-    ad_user: "{{ ad_user }}"
-    password: "{{ ad_password }}"
-    subscription_id: "{{ azure_subscription }}"
-    location: "{{ azure_location }}"
-    resource_group: "{{ azure_resource_group }}"
-    tenant: "{{ azure_tenant_id }}"
-    address_prefixes_cidr: "10.100.100.0/24"
-    name: mgmt
 
 - name: Create mgmt1subnet subnet
   azure_rm_subnet:
@@ -41,8 +29,30 @@
     resource_group: "{{ azure_resource_group }}"
     tenant: "{{ azure_tenant_id }}"
     name: mgmt1subnet
-    virtual_network_name: mgmt
+    virtual_network_name: main
     address_prefix_cidr: "10.100.100.0/24"
+
+- name: Create svc1subnet subnet
+  azure_rm_subnet:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: svc1subnet
+    virtual_network_name: main
+    address_prefix_cidr: "10.100.20.0/24"
+
+- name: Create dmz1subnet subnet
+  azure_rm_subnet:
+    ad_user: "{{ ad_user }}"
+    password: "{{ ad_password }}"
+    subscription_id: "{{ azure_subscription }}"
+    resource_group: "{{ azure_resource_group }}"
+    tenant: "{{ azure_tenant_id }}"
+    name: dmz1subnet
+    virtual_network_name: main
+    address_prefix_cidr: "10.100.254.0/24"
 
 - name: Create mtr network
   azure_rm_virtualnetwork:
@@ -65,50 +75,6 @@
     name: mtr1subnet
     virtual_network_name: mtr
     address_prefix_cidr: "172.17.1.0/24"
-
-- name: Create svc network
-  azure_rm_virtualnetwork:
-    ad_user: "{{ ad_user }}"
-    password: "{{ ad_password }}"
-    subscription_id: "{{ azure_subscription }}"
-    location: "{{ azure_location }}"
-    resource_group: "{{ azure_resource_group }}"
-    tenant: "{{ azure_tenant_id }}"
-    address_prefixes_cidr: "10.100.20.0/24"
-    name: svc
-
-- name: Create svc1subnet subnet
-  azure_rm_subnet:
-    ad_user: "{{ ad_user }}"
-    password: "{{ ad_password }}"
-    subscription_id: "{{ azure_subscription }}"
-    resource_group: "{{ azure_resource_group }}"
-    tenant: "{{ azure_tenant_id }}"
-    name: svc1subnet
-    virtual_network_name: svc
-    address_prefix_cidr: "10.100.20.0/24"
-
-- name: Create dmz network
-  azure_rm_virtualnetwork:
-    ad_user: "{{ ad_user }}"
-    password: "{{ ad_password }}"
-    subscription_id: "{{ azure_subscription }}"
-    location: "{{ azure_location }}"
-    resource_group: "{{ azure_resource_group }}"
-    tenant: "{{ azure_tenant_id }}"
-    address_prefixes_cidr: "10.100.254.0/24"
-    name: dmz
-
-- name: Create dmz1subnet subnet
-  azure_rm_subnet:
-    ad_user: "{{ ad_user }}"
-    password: "{{ ad_password }}"
-    subscription_id: "{{ azure_subscription }}"
-    resource_group: "{{ azure_resource_group }}"
-    tenant: "{{ azure_tenant_id }}"
-    name: dmz1subnet
-    virtual_network_name: dmz
-    address_prefix_cidr: "10.100.254.0/24"
 
 # TODO: There seems to be no azure module for vnet peering
 
