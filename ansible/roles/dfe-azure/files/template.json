@@ -80,7 +80,11 @@
             "ns": {
                 "size": "Standard_DS1_v2",
                 "subnet": "dmz1subnet",
-                "count": 2,
+                "count": 1,
+                "ipAddresses": [
+                    "10.100.254.21",
+                    "10.100.254.22"
+                ],
                 "publicIP": false,
                 "disk": "5GB"
             },
@@ -88,6 +92,10 @@
                 "size": "Standard_DS1_v2",
                 "subnet": "app1subnet",
                 "count": 1,
+                "ipAddresses": [
+                    "10.100.1.5",
+                    "10.100.1.6"
+                ],
                 "publicIP": true,
                 "disk": "5GB"
             },
@@ -95,6 +103,11 @@
                 "size": "Standard_E2s_v3",
                 "subnet": "app1subnet",
                 "count": 3,
+                "ipAddresses": [
+                    "10.100.1.21",
+                    "10.100.1.22",
+                    "10.100.1.23"
+                ],
                 "publicIP": false,
                 "disk": "60GB"
             },
@@ -102,6 +115,10 @@
                 "size": "Standard_E2s_v3",
                 "subnet": "app1subnet",
                 "count": 2,
+                "ipAddresses": [
+                    "10.100.1.51",
+                    "10.100.1.52"
+                ],
                 "publicIP": false,
                 "disk": "60GB"
             },
@@ -109,13 +126,21 @@
                 "size": "Standard_DS1_v2",
                 "subnet": "mgmt1subnet",
                 "count": 2,
+                "ipAddresses": [
+                    "10.100.100.11",
+                    "10.100.100.12"
+                ],
                 "publicIP": false,
                 "disk": "5GB"
             },
             "mtr": {
                 "size": "Standard_DS1_v2",
-                "subnet": "mtr1subnet",
+                "subnet": "mgmt1subnet",
                 "count": 2,
+                "ipAddresses": [
+                    "10.100.100.15",
+                    "10.100.100.16"
+                ],
                 "publicIP": false,
                 "disk": "5GB"
             },
@@ -123,6 +148,10 @@
                 "size": "Standard_DS1_v2",
                 "subnet": "svc1subnet",
                 "count": 1,
+                "ipAddresses": [
+                    "10.100.20.5",
+                    "10.100.20.6"
+                ],
                 "publicIP": true,
                 "disk": "5GB"
             },
@@ -130,6 +159,11 @@
                 "size": "Standard_E2s_v3",
                 "subnet": "svc1subnet",
                 "count": 3,
+                "ipAddresses": [
+                    "10.100.20.21",
+                    "10.100.20.22",
+                    "10.100.20.23"
+                ],
                 "publicIP": false,
                 "disk": "60GB"
             },
@@ -137,6 +171,10 @@
                 "size": "Standard_E2s_v3",
                 "subnet": "svc1subnet",
                 "count": 2,
+                "ipAddresses": [
+                    "10.100.20.51",
+                    "10.100.20.52"
+                ],
                 "publicIP": false,
                 "disk": "60GB"
             }
@@ -173,7 +211,8 @@
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), variables('machine_spec')['aom']['subnet'])]"
                             },
-                            "privateIPAllocationMethod": "Dynamic"
+                            "privateIPAllocationMethod": "Static",
+                            "privateIpAddress": "[variables('machine_spec')['aom']['ipAddresses'][copyIndex()]]"
                         }
                     }
                 ]
@@ -262,7 +301,8 @@
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), variables('machine_spec')['aon']['subnet'])]"
                             },
-                            "privateIPAllocationMethod": "Dynamic"
+                            "privateIPAllocationMethod": "Static",
+                            "privateIpAddress": "[variables('machine_spec')['aon']['ipAddresses'][copyIndex()]]"
                         }
                     }
                 ]
@@ -351,7 +391,8 @@
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), variables('machine_spec')['ipa']['subnet'])]"
                             },
-                            "privateIPAllocationMethod": "Dynamic"
+                            "privateIPAllocationMethod": "Static",
+                            "privateIpAddress": "[variables('machine_spec')['ipa']['ipAddresses'][copyIndex()]]"
                         }
                     }
                 ]
@@ -433,14 +474,16 @@
                 "[concat('Microsoft.Network/virtualNetworks/', 'main')]"
             ],
             "properties": {
+                "primary": true,
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
                         "properties": {
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_mtr_name'), variables('machine_spec')['mtr']['subnet'])]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), variables('machine_spec')['mtr']['subnet'])]"
                             },
-                            "privateIPAllocationMethod": "Dynamic"
+                            "privateIPAllocationMethod": "Static",
+                            "privateIpAddress": "[variables('machine_spec')['mtr']['ipAddresses'][copyIndex()]]"
                         }
                     }
                 ]
@@ -451,7 +494,33 @@
             }
         },
         {
-            "comments": "Application load balancer",
+            "name": "[concat('mtr1', copyIndex())]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2016-09-01",
+            "location": "northeurope",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', 'mtr')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_mtr_name'), 'mtr1subnet')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ]
+            },
+            "copy": {
+                "name": "nicmtr1copy",
+                "count": "[variables('machine_spec')['mtr']['count']]"
+            }
+        },
+        {
+            "comments": "Monitoring",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat('mtr', copyIndex())]",
             "apiVersion": "2016-04-30-preview",
@@ -501,12 +570,16 @@
                     "networkInterfaces": [
                         {
                             "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr', copyIndex()))]"
+                        },
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr1', copyIndex()))]"
                         }
                     ]
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr', copyIndex()))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr', copyIndex()))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr1', copyIndex()))]"
             ],
             "copy": {
                 "name": "mtrcopy",
@@ -529,7 +602,8 @@
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), variables('machine_spec')['som']['subnet'])]"
                             },
-                            "privateIPAllocationMethod": "Dynamic"
+                            "privateIPAllocationMethod": "Static",
+                            "privateIpAddress": "[variables('machine_spec')['som']['ipAddresses'][copyIndex()]]"
                         }
                     }
                 ]
@@ -618,7 +692,8 @@
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_main_name'), variables('machine_spec')['son']['subnet'])]"
                             },
-                            "privateIPAllocationMethod": "Dynamic"
+                            "privateIPAllocationMethod": "Static",
+                            "privateIpAddress": "[variables('machine_spec')['son']['ipAddresses'][copyIndex()]]"
                         }
                     }
                 ]
@@ -709,6 +784,71 @@
                             "sourcePortRange": "*",
                             "destinationAddressPrefix": "*",
                             "destinationPortRange": "22"
+                        }
+                    },
+                    {
+
+                    }
+                ],
+                "securityRules": [
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound",
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Port_80",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Port_443",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound",
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Port_1194",
+                        "properties": {
+                            "protocol": "UDP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "1194",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 102,
+                            "direction": "Inbound",
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
                         }
                     }
                 ]
