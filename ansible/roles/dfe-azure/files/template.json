@@ -507,7 +507,7 @@
                         "name": "ipconfig1",
                         "properties": {
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_mtr_name'), 'mtr1subnet')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'mtr', 'mtr1subnet')]"
                             },
                             "privateIPAllocationMethod": "Dynamic"
                         }
@@ -569,17 +569,16 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
+                            "properties": {
+                                "primary": true
+                            },
                             "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr', copyIndex()))]"
-                        },
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr1', copyIndex()))]"
                         }
                     ]
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr', copyIndex()))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr1', copyIndex()))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', concat('mtr', copyIndex()))]"
             ],
             "copy": {
                 "name": "mtrcopy",
@@ -1094,7 +1093,6 @@
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/58d88898-e823-4471-93fd-7b16a05b60e1/resourceGroups/OpenShiftV36_dev/providers/Microsoft.Network/virtualNetworks/mtr/subnets/mtr1subnet'.",
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "name": "[concat(parameters('virtualNetworks_mtr_name'), '/', parameters('subnets_mtr1subnet_name'))]",
             "apiVersion": "2017-06-01",

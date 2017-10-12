@@ -2,6 +2,7 @@
 
 - name: Deploying template in {{ azure_resource_group }}
   azure_rm_deployment:
+    deployment_name: "foo"
     ad_user: "{{ ad_user }}"
     password: "{{ ad_password }}"
     subscription_id: "{{ azure_subscription }}"
