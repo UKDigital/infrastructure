@@ -1,7 +1,7 @@
 ---
 # defaults file for dfe-azure
 
-env: "dev"
+env: "dev2"
 
 # Azure DNS
 azure_dns_rg: "dfetestrg"

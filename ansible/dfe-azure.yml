@@ -9,5 +9,5 @@
       default: "zoltan.kozma@cadenceinnova.com"
     - name: ad_password
       prompt: Azure AD password
-      default: '123Sunildak'
+      default: 'boo'
       private: yes
