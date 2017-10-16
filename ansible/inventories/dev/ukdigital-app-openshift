@@ -34,7 +34,7 @@ etcd
 openshift_disable_check=disk_availability,docker_storage
 
 ansible_become=true
-deployment_type=openshift-enterprise
+openshift_deployment_type=openshift-enterprise
 containerized=true
 openshift_clock_enabled=true
 os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
