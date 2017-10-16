@@ -26,7 +26,7 @@
 
 # Set the hostname
 - name: Set the hostname
-  hostname: name={{ inventory_hostname }}
+  hostname: name={{ inventory_hostname }}.{{ domain_name }}
 
 # Set the time zone
 - name: Set to UTC timezone

@@ -71,9 +71,9 @@
     copy:
       src=files/resolv.conf dest=/etc/resolv.conf
 
-- include: ../../../openshift-ansible/playbooks/common/openshift-cluster/config.yml
+- import_playbook: ../../../openshift-ansible/playbooks/common/openshift-cluster/config.yml
   vars:
-    openshift_release: 3.3
+    openshift_release: 3.6
     g_etcd_hosts:   "{{ groups.etcd | default([]) }}"
     g_lb_hosts:     "{{ groups.lb | default([]) }}"
     g_master_hosts: "{{ groups.masters | default([]) }}"
@@ -89,17 +89,17 @@
     openshift_debug_level: "{{ debug_level | default(2) }}"
     openshift_deployment_type: "{{ deployment_type }}"
 
-- hosts: all
-  tasks:
-  - name: Accept tcp:9090 for Cockpit
-    command: >
-      iptables -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport
-      9090 -j ACCEPT
-  - name: Save iptables rules
-    shell: iptables-save > /etc/sysconfig/iptables
-  - name: Set the master schedulable
-    command: /usr/local/bin/oadm manage-node {{ inventory_hostname }} --schedulable=true
-    when: "'masters' in group_names"
+#- hosts: all
+#  tasks:
+#  - name: Accept tcp:9090 for Cockpit
+#    command: >
+#      iptables -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport
+#      9090 -j ACCEPT
+#  - name: Save iptables rules
+#    shell: iptables-save > /etc/sysconfig/iptables
+#  - name: Set the master schedulable
+#    command: /usr/local/bin/oadm manage-node {{ inventory_hostname }} --schedulable=true
+#    when: "'masters' in group_names"
 #  - name: Set correct URL in master-config.yaml
 #    command: >
 #      sed -i 's|{{ ansible_host }}:8443|{{inventory_hostname}}:8443|g'

@@ -1,0 +1,571 @@
+---
+# Copyright (c) 2017, Secnix Systems
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the <organization> nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL BIS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+##### VPN Servers #####
+
+- name: Create vpn security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: vpn
+    purge_rules: yes
+    rules: 
+      - name: DenySSH
+        protocol: TCP
+        destination_port_range: 22
+        access: Deny
+        priority: 100
+        direction: Inbound
+
+- name: Allow vpn ssh ingress
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: vpn
+    rules:
+      - name: 'AllowSSH'
+        protocol: TCP
+        source_address_prefix: '{{ item.ipblock }}'
+        destination_port_range: 22
+        access: Allow
+        priority: 10{{ item.count }}
+        direction: Inbound
+  with_items:
+  - { ipblock: '213.123.63.0/24', count: 1 }
+  - { ipblock: '217.138.9.100/32', count: 2 }
+
+- name: Allow vpn https ingress
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: vpn
+    rules:
+      - name: 'AllowHTTPS'
+        protocol: TCP
+        source_address_prefix: '{{ item.ipblock }}'
+        destination_port_range: 443
+        access: Allow
+        priority: 10{{ item.count }}
+        direction: Inbound
+  with_items:
+  - { ipblock: '213.123.63.0/24', count: 1 }
+  - { ipblock: '217.138.9.100/32', count: 2 }
+
+- name: Allow vpn udp:1194 ingress to 0.0.0.0/0
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: vpn
+    rules:
+      - name: 'AllowOpenVPN'
+        protocol: UDP
+        destination_port_range: 1194
+        access: Allow
+        priority: 50
+        direction: Inbound
+
+##### External SSH #####
+
+- name: Create external_ssh security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: external_ssh
+    purge_rules: yes
+
+- name: Allow ssh from {{ item }} netblock
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: external_ssh
+    rules:
+      - name: 'AllowSSH{{ item.count }}'
+        protocol: TCP
+        source_address_prefix: '{{ item }}'
+        destination_port_range: 22
+        access: Allow
+        priority: 5{{ item.count }}
+        direction: Inbound
+  with_items:
+  - { ipblock: '193.240.0.0/16', count: 1 }
+  - { ipblock: '94.118.0.0/16', count: 2 }
+
+##### Remote Repositories #####
+
+- name: Create remote_repositories security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: remote_repositories
+    purge_rules: yes
+
+##### External DNS #####
+
+- name: Create remote_dns security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: remote_dns
+    purge_rules: yes
+    rules:
+      - name: AllowDNSUDP
+        protocol: UDP
+        destination_port_range: 53
+        access: Allow
+        priority: 100
+        direction: Inbound
+      - name: AllowDNSTCP
+        protocol: TCP
+        destination_port_range: 53
+        access: Allow
+        priority: 101
+        direction: Inbound
+      - name: AllowSSH
+        protocol: TCP
+        source_address_prefix: 10.100.254.0/24
+        destination_port_range: 22
+        access: Allow
+        priority: 150
+        direction: Inbound
+
+#### Monitoring Servers #####
+
+- name: Create the internal_monitoring security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: internal_monitoring
+    purge_rules: yes
+    rules:
+      - name: AllowSSH
+        protocol: TCP
+        destination_port_range: 22
+        access: Allow
+        priority: 100
+        direction: Inbound
+
+- name: Create the private_monitoring security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: private_monitoring
+    purge_rules: yes
+    rules:
+      - name: AllowSSH
+        protocol: TCP
+        source_address_prefix: '172.17.1.0/24'
+        destination_port_range: 22
+        access: Allow
+        priority: 100
+        direction: Inbound
+
+##### IPA Servers #####
+
+- name: Create ipa_server security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: ipa_server
+    purge_rules: yes
+
+- name: Allow ipa_server tcp:{{ item }} from the compartment
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: ipa_server
+    rules:
+      - name: AllowTCP{{ item.port }}
+        protocol: TCP
+        source_address_prefix: '10.100.0.0/16'
+        destination_port_range: {{ item.port }}
+        access: Allow
+        priority: 10{{ item.count }}
+        direction: Inbound
+  with_items:
+  - { port: 53, count: 1 }
+  - { port: 80, count: 2 }
+  - { port: 88, count: 3 }
+  - { port: 389, count: 4 }
+  - { port: 443, count: 5 }
+  - { port: 464, count: 6 }
+  - { port: 636, count: 7 }
+
+- name: Allow ipa_server udp:{{ item }} from the compartment
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: ipa_server
+    rules:
+      - name: AllowUDP{{ item.port }}
+        protocol: UDP
+        source_address_prefix: '10.100.0.0/16'
+        destination_port_range: {{ item.port }}
+        access: Allow
+        priority: 10{{ item.count }}
+        direction: Inbound
+  with_items:
+  - { port: 53, count: 1 }
+  - { port: 88, count: 2 }
+  - { port: 123, count: 3 }
+  - { port: 464, count: 4 }
+
+##### App Load Balancer Nodes #####
+
+- name: Create app_loadbalancer_nodes security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_loadbalancer_nodes
+    purge_rules: yes
+
+- name: Allow tcp from the internet to the app compartment
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_loadbalancer_nodes
+    rules:
+      - name: AllowTCP{{ item.port }}
+        protocol: TCP
+        destination_port_range: {{ item.port }}
+        access: Allow
+        priority: 10{{ item.count }}
+        direction: Inbound
+  with_items:
+  - { port: 80, count: 1 }
+  - { port: 443, count: 2 }
+
+- name: Allow tcp from the compartment to the app loadbalancers
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_loadbalancer_nodes
+    rules:
+      - name: AllowCompartmentTCP{{ item.port }}
+        protocol: TCP
+        source_address_prefix: '10.100.0.0/16'
+        destination_port_range: {{ item.port }}
+        access: Allow
+        priority: 10{{ item.count }}
+        direction: Inbound
+  with_items:
+  - 8443
+
+##### App Nodes #####
+
+- name: Create app_nodes security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_nodes
+    purge_rules: yes
+    rules:
+      - name: AllowCompartmentSSH
+        protocol: TCP
+        source_address_prefix: 10.100.0.0/16
+        destination_port_range: 22
+        access: Allow
+        priority: 100
+        direction: Inbound
+
+##### Mgmt Nodes #####
+
+- name: Create mgmt security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: mgmt_nodes
+    purge_rules: yes
+
+- name: Allow ssh (tcp:22) to/from a host in the compartment
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: mgmt_nodes
+    rules:
+      - name: AllowCompartmentSSH
+        protocol: TCP
+        source_address_prefix: '10.100.0.0/16'
+        destination_port_range: 22
+        access: Allow
+        priority: 100
+        direction: Inbound
+
+##### Openshift App Master #####
+
+- name: Create app OpenShift master group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_openshift_master
+    purge_rules: yes
+
+- name: Allow remote access to app OpenShift master:tcp ports from anywhere
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_openshift_master
+    rules:
+      - name: AllowTCP{{ item.port }}
+        protocol: TCP
+        destination_port_range: {{ item.port }}
+        access: Allow
+        priority: 10{{ item.count }}
+        direction: Inbound
+  with_items:
+  - { port: 80, count: 1 }
+  - { port: 8443, count: 2 }
+  - { port: 9090, count: 3 }
+
+- name: Allow specific tcp to OpenShift master from the app compartment
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_openshift_master
+    rules:
+      - name: AllowCompartmentTCP{{ item.port }}
+        protocol: TCP
+        source_address_prefix: '10.100.1.0/24'
+        destination_port_range: {{ item.port | int }}
+        access: Allow
+        priority: 10{{ item.count | int }}
+        direction: Inbound
+  with_items:
+  - { port: 111, count: 1 }
+  - { port: 1936, count: 2 }
+  - { port: 2049, count: 3 }
+  - { port: 2379, count: 4 }
+  - { port: 2380, count: 5 }
+  - { port: 4194, count: 6 }
+  - { port: 8080, count: 7 }
+  - { port: 10250, count: 8 }
+  - { port: 20048, count: 9 }
+  - { port: 50825, count: 10 }
+  - { port: 53248, count: 11 }
+
+- name: Allow specific udp to OpenShift master from the app compartment
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_openshift_master
+    rules:
+      - name: AllowUDP{{ item.port }}
+        protocol: UDP
+        source_address_prefix: '10.100.1.0/24'
+        destination_port_range: {{ item.port | int }}
+        access: Allow
+        priority: 10{{ item.count | int }}
+        direction: Inbound
+  with_items:
+  - 4789
+
+- name: Allow specific tcp to OpenShift master from the app compartment
+    resource_group: {{ resource_group }}
+    name: app_openshift_master
+    rules:
+      - name: AllowCompartmentTCP{{ item.port }}
+        protocol: TCP
+        source_address_prefix: '10.100.1.0/24'
+        destination_port_range: {{ item.port | int }}
+        access: Allow
+        priority: 10{{ item.count | int }}
+        direction: Inbound
+
+###### START HERE
+
+  os_security_group_rule:
+    security_group: app_openshift_master
+    protocol: "{{ item[0] }}"
+    port_range_min: "{{ item[1] | int }}"
+    port_range_max: "{{ item[1] | int }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_nested:
+  - [ 'tcp', 'udp' ]
+  - [ 8053, 24224 ]
+
+##### Openshift App Node #####
+
+- name: Create app OpenShift node group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: app_openshift_node
+    purge_rules: yes
+
+- name: Allow specific tcp ports to OpenShift node from the app compartment
+  os_security_group_rule:
+    security_group: app_openshift_node
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 10250
+
+- name: Allow specific udp ports to OpenShift node from the app compartment
+  os_security_group_rule:
+    security_group: app_openshift_node
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 4789
+
+##### Svc Nodes #####
+
+- name: Create svc_nodes security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: svc__nodes
+    purge_rules: yes
+
+- name: Allow ssh (tcp:22) to/from a host in the compartment
+  os_security_group_rule:
+    security_group: svc_nodes
+    protocol: tcp
+    direction: "{{ item }}"
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - ingress
+  - egress
+
+##### Svc Load Balancer Nodes #####
+
+- name: Create svc_loadbalancer_nodes security group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: svc_loadbalancer_nodes
+    purge_rules: yes
+
+- name: Allow tcp from the app to the svc services
+  os_security_group_rule:
+    security_group: svc_loadbalancer_nodes
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 80
+  - 443
+
+- name: Allow tcp from the dmz to the svc services
+  os_security_group_rule:
+    security_group: svc_loadbalancer_nodes
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.253.0/28
+  with_items:
+  - 80
+  - 443
+
+- name: Allow tcp from the compartment to the svc loadbalancers
+  os_security_group_rule:
+    security_group: app_loadbalancer_nodes
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.0.0/16
+  with_items:
+  - 8443
+
+##### OpenShift Svc Master #####
+
+- name: Create svc OpenShift master group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: svc_openshift_master
+    purge_rules: yes
+
+- name: Allow remote access to svc OpenShift master:tcp ports from svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 80
+  - 8443
+  - 9090
+
+- name: Allow remote access to svc OpenShift master:tcp ports from app
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.1.0/24
+  with_items:
+  - 80
+  - 8443
+
+- name: Allow specific tcp to OpenShift master from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 111
+  - 2049
+  - 2379
+  - 2380
+  - 4194
+  - 8080
+  - 10250
+  - 20048
+  - 50825
+  - 53248
+
+- name: Allow specific udp to OpenShift master from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 4789
+
+- name: Allow specific tcp and udp to OpenShift master from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_master
+    protocol: "{{ item[0] }}"
+    port_range_min: "{{ item[1] | int }}"
+    port_range_max: "{{ item[1] | int }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_nested:
+  - [ 'tcp', 'udp' ]
+  - [ 8053, 24224 ]
+
+
+##### Openshift Svc Node #####
+
+- name: Create svc OpenShift node group
+  azure_rm_securitygroup:
+    resource_group: {{ resource_group }}
+    name: svc_openshift_node
+    purge_rules: yes
+
+- name: Allow specific tcp ports to OpenShift node from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_node
+    protocol: tcp
+    port_range_min: "{{ item }}"
+    port_range_max: "{{ item }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 10250
+
+- name: Allow specific udp ports to OpenShift node from the svc compartment
+  os_security_group_rule:
+    security_group: svc_openshift_node
+    protocol: udp
+    port_range_min: "{{ item | int }}"
+    port_range_max: "{{ item | int }}"
+    remote_ip_prefix: 10.100.20.0/24
+  with_items:
+  - 4789

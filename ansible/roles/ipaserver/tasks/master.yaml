@@ -31,7 +31,7 @@
     --domain {{ ipaserver_domain }}
     -a{{ ipaserver_admin_password }}
     -p{{ ipaserver_dir_mgmt_password }}
-    --hostname={{ inventory_hostname }}
+    --hostname={{ inventory_hostname }}.{{ ipaserver_domain }}
     --ip-address={{ hostvars[inventory_hostname]['ansible_host'] }}
     {{ '--idstart=%s' % ipaserver_idstart if ipaserver_idstart | default(False) else '' }}
     {{ '--idmax=%s' % ipaserver_idmax if ipaserver_idmax | default(False) else '' }}
@@ -88,8 +88,8 @@
   shell:
     ldappasswd -ZZ -D 'cn=directory manager' -w{{ ipaserver_dir_mgmt_password }}
       -s{{ ipaserver_admin_password }}
-      uid=admin,cn=users,cn=accounts,dc=licensing,dc=service,dc=trade,dc=gov,dc=uk,dc=test
-      -H ldap://{{ inventory_hostname }}
+      uid=admin,cn=users,cn=accounts,dc=paas,dc=education,dc=gov,dc=uk,dc=test
+      -H ldap://{{ inventory_hostname }}.{{ ipaserver_domain }}
   when: ktf.stat.exists == False
 
 ##### NOW I COMPLETELY UNDERSTAND #####
@@ -97,7 +97,7 @@
 - name: Create a keytab file
   shell:
     echo {{ ipaserver_admin_password }} | kinit admin@{{ ipaserver_realm }} ;
-    ipa-getkeytab -s {{ inventory_hostname }} -p admin@{{ ipaserver_realm }} 
+    ipa-getkeytab -s {{ inventory_hostname }}.{{ ipaserver_domain }} -p admin@{{ ipaserver_realm }} 
       -k {{ ipaserver_keytab }}
   args:
     executable: /bin/bash

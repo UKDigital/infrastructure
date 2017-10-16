@@ -29,11 +29,12 @@
                        password={{ redhat_password }}
                        autosubscribe=true
   register: sub1_result
+  when: redhat_username != ""
   failed_when: "'This system is already registered' not in sub1_result.msg \
                 and sub1_result|failed"
 
 - name: Install yum-utils
-  yum: disablerepo=* enablerepo=rhel-7-server-eus-rpms name=yum-utils
+  yum: disablerepo=* enablerepo=rhui-rhel-7-server-rhui-rpms name=yum-utils
        state=latest
   register: inst_result
   ignore_errors: yes
@@ -42,15 +43,15 @@
   redhat_subscription: state=present username={{ redhat_username }}
                        password={{ redhat_password }}
                        force_register=true autosubscribe=true
-  when: "inst_result|failed"
+  when: ("inst_result|failed") and (redhat_username != "")
 
 - name: Install yum-utils
-  yum: disablerepo=* enablerepo=rhel-7-server-eus-rpms name=yum-utils 
+  yum: disablerepo=* enablerepo=rhui-rhel-7-server-rhui-rpms name=yum-utils 
        state=latest
   when: "inst_result|failed"
 
 - name: Install required packages
-  yum: disablerepo=* enablerepo=rhel-7-server-rpms name={{ item }}
+  yum: disablerepo=* enablerepo=rhui-rhel-7-server-rhui-rpms name={{ item }}
        state=latest
   with_flattened:
     - libsemanage-python

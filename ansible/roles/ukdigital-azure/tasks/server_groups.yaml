@@ -24,49 +24,66 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# https://github.com/ansible/ansible/pull/16138
-#- name: Wait for reboot
-#  delegate_to: "{{ golden_host }}"
-#  wait_for:
-#    host={{ inventory_hostname }}
-#    port=22
-#    poll=1
-#    timeout=300
+- name: Create the monitoring server group
+  os_server_group:
+    state: present
+    name: internal_monitoring
+    policies:
+      - anti-affinity
 
-# Need to increase entropy as cloud providers generally don't have enough
-# and this leads to exceptionally lengthy or incomplete installs.
-- name: Install haveged
-  yum: name=http://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
-       state=present
+- name: Create the external DNS server group
+  os_server_group:
+    state: present
+    name: external_dns
+    policies:
+      - anti-affinity
 
-- name: Start haveged
-  service: name=haveged state=started
+- name: Create the internal services server group
+  os_server_group:
+    state: present
+    name: internal_services
+    policies:
+      - anti-affinity
 
-- name: Install IPA server software
-  yum: name={{ item }} state=present
-  with_items: "{{ ipaserver_packages }}"
+- name: Create the OpenShift app master server group
+  os_server_group:
+    state: present
+    name: app_openshift_master
+    policies:
+      - anti-affinity
 
-- name: Remove hostname resolving to 127.0.0.1
-  lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1\s+{{ ansible_hostname }}.{{ ipaserver_domain }}' 
-              state=absent
+- name: Create the OpenShift app node server group
+  os_server_group:
+    state: present
+    name: app_openshift_node
+    policies:
+      - anti-affinity
 
-- name: Insert IPA server hosts entry
-  lineinfile: dest=/etc/hosts regexp="^{{ hostvars[item]['ansible_host'] }}" 
-              line="{{ hostvars[item]['ansible_host'] }}\t{{ hostvars[item]['inventory_hostname'] }}.{{ ipaserver_domain }}\t{{ hostvars[item]['ansible_hostname'] }}"
-  with_items: "{{ groups['ukdigital-mgmt-ipa'] }}"
+- name: Create the app load balancer server group
+  os_server_group:
+    state: present
+    name: app_loadbalancer_nodes
+    policies:
+      - anti-affinity
 
-- include: master.yaml
-  when: "hostvars[inventory_hostname]['iparole'] == 'master'"
-  tags:
-    - masters
+- name: Create the OpenShift svc master server group
+  os_server_group:
+    state: present
+    name: svc_openshift_master
+    policies:
+      - anti-affinity
 
-#- include: dnsentries.yaml
-#  when: "hostvars[inventory_hostname]['iparole'] == 'master"
-#  tags:
-#    - dnsentries
+- name: Create the OpenShift svc node server group
+  os_server_group:
+    state: present
+    name: svc_openshift_node
+    policies:
+      - anti-affinity
 
-- include: replica.yaml
-  when: "hostvars[inventory_hostname]['iparole'] == 'replica'"
-  tags:
-    - replicas
+- name: Create the svc load balancer server group
+  os_server_group:
+    state: present
+    name: svc_loadbalancer_nodes
+    policies:
+      - anti-affinity
 

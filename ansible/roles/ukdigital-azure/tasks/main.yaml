@@ -24,49 +24,42 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# https://github.com/ansible/ansible/pull/16138
-#- name: Wait for reboot
-#  delegate_to: "{{ golden_host }}"
-#  wait_for:
-#    host={{ inventory_hostname }}
-#    port=22
-#    poll=1
-#    timeout=300
-
-# Need to increase entropy as cloud providers generally don't have enough
-# and this leads to exceptionally lengthy or incomplete installs.
-- name: Install haveged
-  yum: name=http://195.220.108.108/linux/epel/7/x86_64/h/haveged-1.9.1-1.el7.x86_64.rpm 
-       state=present
-
-- name: Start haveged
-  service: name=haveged state=started
-
-- name: Install IPA server software
-  yum: name={{ item }} state=present
-  with_items: "{{ ipaserver_packages }}"
-
-- name: Remove hostname resolving to 127.0.0.1
-  lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1\s+{{ ansible_hostname }}.{{ ipaserver_domain }}' 
-              state=absent
-
-- name: Insert IPA server hosts entry
-  lineinfile: dest=/etc/hosts regexp="^{{ hostvars[item]['ansible_host'] }}" 
-              line="{{ hostvars[item]['ansible_host'] }}\t{{ hostvars[item]['inventory_hostname'] }}.{{ ipaserver_domain }}\t{{ hostvars[item]['ansible_hostname'] }}"
-  with_items: "{{ groups['ukdigital-mgmt-ipa'] }}"
-
-- include: master.yaml
-  when: "hostvars[inventory_hostname]['iparole'] == 'master'"
+# Create the resource group
+- include: resource_group.yaml
   tags:
-    - masters
+    - resource_group
 
-#- include: dnsentries.yaml
-#  when: "hostvars[inventory_hostname]['iparole'] == 'master"
+# Create the networks and attach subnets
+- include: networks.yaml
+  tags:
+    - networks
+
+# Create the associated security groups for subnets and services
+- include: security.yaml
+  tags:
+    - security
+
+# Ensure the proper images are available
+#- include: images.yaml
 #  tags:
-#    - dnsentries
+#    - images
 
-- include: replica.yaml
-  when: "hostvars[inventory_hostname]['iparole'] == 'replica'"
+# Create the ports to assign each instance to
+- include: ports.yaml
   tags:
-    - replicas
+    - ports
 
+# Create Cinder volumes
+#- include: volumes.yaml
+#  tags:
+#    - volumes
+
+# Create server groups for anti-affinity 
+#- include: server_groups.yaml
+#  tags:
+#    - server_groups
+
+# Create instances homed to specific subnets with attached security groups
+- include: instances.yaml
+  tags:
+    - instances

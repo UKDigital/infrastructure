@@ -42,7 +42,7 @@
 
 - name: Check if this is a replica
   shell:
-    ipa-replica-conncheck --replica={{ inventory_hostname }}
+    ipa-replica-conncheck --replica={{ inventory_hostname }}.{{ ipaserver_domain }}
   register: replica_conncheck
   ignore_errors: yes
 

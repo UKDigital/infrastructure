@@ -31,32 +31,32 @@ etcd
 
 [OSEv3:vars]
 ansible_become=true
-deployment_type=openshift-enterprise
+openshift_deployment_type=openshift-enterprise
 containerized=true
 openshift_clock_enabled=true
 os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
 
 openshift_master_cluster_method=native
-openshift_master_cluster_hostname=ukdigitalalb.{{ domain_name }}.test
-openshift_master_cluster_public_hostname=ukdigitalalb.{{ domain_name }}.test
+openshift_master_cluster_hostname=ukdigitalapp.paas.education.gov.uk.test
+openshift_master_cluster_public_hostname=ukdigitalapp.paas.education.gov.uk.test
 
-openshift_master_default_subdomain={{ domain_name }}
+openshift_master_default_subdomain=paas.education.gov.uk
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
-ukdigitalaom01.{{ domain_name }}.test openshift_hostname=ukdigitalaom01.{{ domain_name }}.test openshift_public_hostname=ukdigitalaom01.{{ domain_name }}.test ansible_host=10.100.1.21
-ukdigitalaom02.{{ domain_name }}.test openshift_hostname=ukdigitalaom02.{{ domain_name }}.test openshift_public_hostname=ukdigitalaom02.{{ domain_name }}.test ansible_host=10.100.1.22
-ukdigitalaom03.{{ domain_name }}.test openshift_hostname=ukdigitalaom02.{{ domain_name }}.test openshift_public_hostname=ukdigitalaom03.{{ domain_name }}.test ansible_host=10.100.1.23
+ukdigitalaom01.paas.education.gov.uk.test openshift_hostname=ukdigitalaom01.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom01.paas.education.gov.uk.test ansible_host=10.100.1.21
+ukdigitalaom02.paas.education.gov.uk.test openshift_hostname=ukdigitalaom02.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom02.paas.education.gov.uk.test ansible_host=10.100.1.22
+ukdigitalaom03.paas.education.gov.uk.test openshift_hostname=ukdigitalaom02.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom03.paas.education.gov.uk.test ansible_host=10.100.1.23
 
 [etcd]
-ukdigitalaom01.{{ domain_name }}.test ansible_host=10.100.1.21
-ukdigitalaom02.{{ domain_name }}.test ansible_host=10.100.1.22
-ukdigitalaom03.{{ domain_name }}.test ansible_host=10.100.1.23
+ukdigitalaom01.paas.education.gov.uk.test ansible_host=10.100.1.21
+ukdigitalaom02.paas.education.gov.uk.test ansible_host=10.100.1.22
+ukdigitalaom03.paas.education.gov.uk.test ansible_host=10.100.1.23
 
 [nodes]
-ukdigitalaom01.{{ domain_name }}.test ansible_host=10.100.1.21 openshift_hostname=ukdigitalaom01.{{ domain_name }}.test openshift_public_hostname=ukdigitalaom01.{{ domain_name }}.test openshift_node_labels="{'region': 'infra', 'zone': 'corsham1'}"
-ukdigitalaom02.{{ domain_name }}.test ansible_host=10.100.1.22 openshift_hostname=ukdigitalaom02.{{ domain_name }}.test openshift_public_hostname=ukdigitalaom02.{{ domain_name }}.test openshift_node_labels="{'region': 'infra', 'zone': 'corsham1'}"
-ukdigitalaom03.{{ domain_name }}.test ansible_host=10.100.1.23 openshift_hostname=ukdigitalaom03.{{ domain_name }}.test openshift_public_hostname=ukdigitalaom03.{{ domain_name }}.test openshift_node_labels="{'region': 'infra', 'zone': 'corsham1'}"
+ukdigitalaom01.paas.education.gov.uk.test ansible_host=10.100.1.21 openshift_hostname=ukdigitalaom01.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom01.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region1'}"
+ukdigitalaom02.paas.education.gov.uk.test ansible_host=10.100.1.22 openshift_hostname=ukdigitalaom02.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom02.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region2'}"
+ukdigitalaom03.paas.education.gov.uk.test ansible_host=10.100.1.23 openshift_hostname=ukdigitalaom03.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom03.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region1'}"
 
-ukdigitalaon01.{{ domain_name }}.test ansible_host=10.100.1.51 openshift_hostname=ukdigitalaon01.{{ domain_name }}.test openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"
-ukdigitalaon02.{{ domain_name }}.test ansible_host=10.100.1.52 openshift_hostname=ukdigitalaon02.{{ domain_name }}.test openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"
+ukdigitalaon01.paas.education.gov.uk.test ansible_host=10.100.1.51 openshift_hostname=ukdigitalaon01.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'region1'}"
+ukdigitalaon02.paas.education.gov.uk.test ansible_host=10.100.1.52 openshift_hostname=ukdigitalaon02.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'region2'}"
