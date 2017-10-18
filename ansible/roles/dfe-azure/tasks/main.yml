@@ -2,8 +2,7 @@
 
 - include_tasks: dns.yml
 
-- include_tasks: ansible_main.yml
-  when: not azure_use_resource_templates
-
 - include_tasks: template.yml
-  when: azure_use_resource_templates
+  tags:
+    - template
+    - estate
