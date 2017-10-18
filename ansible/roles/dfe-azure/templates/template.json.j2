@@ -1,0 +1,191 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "main",
+            "apiVersion": "2017-06-01",
+            "location": "northeurope",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.100.0.0/16",
+                        "172.17.1.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "mtr1subnet",
+                        "properties": {
+                            "addressPrefix": "172.17.1.0/24"
+                        }
+                    },
+                    {
+                        "name": "app1subnet",
+                        "properties": {
+                            "addressPrefix": "10.100.1.0/24"
+                        }
+                    },
+                    {
+                        "name": "mgmt1subnet",
+                        "properties": {
+                            "addressPrefix": "10.100.100.0/24"
+                        }
+                    },
+                    {
+                        "name": "svc1subnet",
+                        "properties": {
+                            "addressPrefix": "10.100.20.0/24"
+                        }
+                    },
+                    {
+                        "name": "dmz1subnet",
+                        "properties": {
+                            "addressPrefix": "10.100.254.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": []
+            },
+            "dependsOn": []
+        },
+
+{% for machine_type, machine_spec in azure_machine_spec.items() %}
+
+        {
+            "name": "{{ machine_type }}nsg",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2017-06-01",
+            "location": "northeurope",
+            "properties": {
+                "securityRules": {{ azure_nsg[machine_type] | to_nice_json(indent=4) }}
+            }
+        },
+
+{% for instance in machine_spec.instances %}
+
+{% for interface in instance.interfaces %}
+
+{% if interface.public_ip %}
+        {
+            "name": "{{ instance.hostname }}pip{{ loop.index }}",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2017-08-01",
+            "location": "northeurope",
+            "properties": {
+                "publicIpAllocationMethod": "Static"
+            },
+            "sku": {
+                "name": "Basic"
+            }
+        },
+{% endif %}
+
+        {
+            "name": "{{ instance.hostname }}nic{{ loop.index }}",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2016-09-01",
+            "location": "northeurope",
+            "dependsOn": [
+                "Microsoft.Network/virtualNetworks/main",
+{% if interface.public_ip %}
+                "Microsoft.Network/publicIpAddresses/{{ instance.hostname }}pip{{ loop.index }}",
+{% endif %}
+                "Microsoft.Network/networkSecurityGroups/{{ machine_type }}nsg"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig{{ loop.index }}",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', 'main', '{{ interface.subnet }}')]"
+                            },
+                            "privateIPAllocationMethod": "Static",
+{% if interface.public_ip %}
+                            "publicIpAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', '{{ instance.hostname }}pip{{ loop.index }}')]"
+                            },
+{% endif %}
+                            "privateIpAddress": "{{ interface.ipv4 }}"
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', '{{ machine_type }}nsg')]"
+                }
+            }
+        },
+
+{% endfor %}
+
+        {
+
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "{{ instance.hostname }}",
+            "apiVersion": "2016-04-30-preview",
+            "location": "northeurope",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "{{ machine_spec.size }}"
+                },
+                "osProfile": {
+                    "computerName": "{{ instance.hostname }}",
+                    "adminUsername": "cloud-user",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": {{ azure_ssh_keys | to_nice_json(indent=4) }}
+                        }
+                    },
+                    "secrets": []
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "caching": "ReadOnly",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    },
+                    "imageReference": {{ azure_os_choices[2] | to_nice_json(indent=4) }},
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "createOption": "Empty",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            },
+                            "diskSizeGB": {{ machine_spec.disk_size_gb }}
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+{%for interface in instance.interfaces %}
+                        {
+                            "properties": {
+                              "primary": {% if loop.index == 1 %}true{% else %}false{% endif %}
+                            },
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', '{{ instance.hostname }}nic{{ loop.index }}')]"
+                        }{% if not loop.last %},{% endif %}
+{% endfor %}
+                    ]
+                }
+            },
+            "dependsOn": [
+{%for interface in instance.interfaces %}
+                "[resourceId('Microsoft.Network/networkInterfaces', '{{ instance.hostname }}nic{{ loop.index }}')]"{% if not loop.last %},{% endif %}
+{% endfor %}
+            ]
+        }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+{% if not loop.last %},{% endif %}
+{% endfor %}
+    ]
+}

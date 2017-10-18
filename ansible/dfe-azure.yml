@@ -6,8 +6,176 @@
   vars_prompt:
     - name: ad_user
       prompt: Azure AD user
-      default: "zoltan.kozma@cadenceinnova.com"
+      default: "foo"
     - name: ad_password
       prompt: Azure AD password
-      default: 'boo'
+      default: 'bar'
       private: yes
+  vars:
+    azure_machine_spec:
+      ep:
+        size: Standard_DS1_v2
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}ep01"
+            interfaces:
+              - subnet: dmz1subnet
+                ipv4: "10.100.254.4"
+                public_ip: true
+          - hostname: "{{ azure_hostname_prefix }}ep02"
+            interfaces:
+              - subnet: dmz1subnet
+                ipv4: "10.100.254.5"
+                public_ip: true
+        disk_size_gb: 5
+      ns:
+        size: Standard_DS1_v2
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}ns01"
+            interfaces:
+              - subnet: dmz1subnet
+                ipv4: "10.100.254.21"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}ns02"
+            interfaces:
+              - subnet: dmz1subnet
+                ipv4: "10.100.254.22"
+                public_ip: false
+        disk_size_gb: 5
+      alb:
+        size: Standard_DS1_v2
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}alb01"
+            interfaces:
+              - subnet: app1subnet
+                ipv4: "10.100.1.5"
+                public_ip: true
+          - hostname: "{{ azure_hostname_prefix }}alb02"
+            interfaces:
+              - subnet: app1subnet
+                ipv4: "10.100.1.6"
+                public_ip: true
+        disk_size_gb: 5
+      aom:
+        size: Standard_E2s_v3
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}aom01"
+            interfaces:
+              - subnet: app1subnet
+                ipv4: "10.100.1.21"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}aom02"
+            interfaces:
+              - subnet: app1subnet
+                ipv4: "10.100.1.22"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}aom03"
+            interfaces:
+              - subnet: app1subnet
+                ipv4: "10.100.1.23"
+                public_ip: false
+        disk_size_gb: 60
+      aon:
+        size: Standard_E2s_v3
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}aon01"
+            interfaces:
+              - subnet: app1subnet
+                ipv4: "10.100.1.51"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}aon02"
+            interfaces:
+              - subnet: app1subnet
+                ipv4: "10.100.1.52"
+                public_ip: false
+        disk_size_gb: 60
+      ipa:
+        size: Standard_DS1_v2
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}ipa01"
+            interfaces:
+              - subnet: mgmt1subnet
+                ipv4: "10.100.100.11"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}ipa02"
+            interfaces:
+              - subnet: mgmt1subnet
+                ipv4: "10.100.100.12"
+                public_ip: false
+        disk_size_gb: 5
+      mtr:
+        size: Standard_DS1_v2
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}mtr01"
+            interfaces:
+              - subnet: mgmt1subnet
+                ipv4: "10.100.100.15"
+                public_ip: false
+              - subnet: mtr1subnet
+                ipv4: "172.17.1.4"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}mtr02"
+            interfaces:
+              - subnet: mgmt1subnet
+                ipv4: "10.100.100.16"
+                public_ip: false
+              - subnet: mtr1subnet
+                ipv4: "172.17.1.5"
+                public_ip: false
+        disk_size_gb: 5
+      slb:
+        size: Standard_DS1_v2
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}slb01"
+            interfaces:
+              - subnet: svc1subnet
+                ipv4: "10.100.20.5"
+                public_ip: true
+          - hostname: "{{ azure_hostname_prefix }}slb02"
+            interfaces:
+              - subnet: svc1subnet
+                ipv4: "10.100.20.6"
+                public_ip: true
+        disk_size_gb: 5
+      som:
+        size: Standard_E2s_v3
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}som01"
+            interfaces:
+              - subnet: svc1subnet
+                ipv4: "10.100.20.21"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}som02"
+            interfaces:
+              - subnet: svc1subnet
+                ipv4: "10.100.20.22"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}som03"
+            interfaces:
+              - subnet: svc1subnet
+                ipv4: "10.100.20.23"
+                public_ip: false
+        disk_size_gb: 60
+      son:
+        size: Standard_E2s_v3
+        instances:
+          - hostname: "{{ azure_hostname_prefix }}son01"
+            interfaces:
+              - subnet: svc1subnet
+                ipv4: "10.100.20.51"
+                public_ip: false
+          - hostname: "{{ azure_hostname_prefix }}son02"
+            interfaces:
+              - subnet: svc1subnet
+                ipv4: "10.100.20.52"
+                public_ip: false
+        disk_size_gb: 60
+
+    azure_ssh_keys:
+      - path: "/home/cloud-user/.ssh/authorized_keys"
+        keyData: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDeBUXXick+qa+nAj0KERaKHnJDx07UBrznHAAErHkK7HY+yvvQKtGEkIXQC4mCgCJc1WkUHIJl91Ppv+hIqCyU4O4X18y0jdLs19xCfZemwrndijXKljLlNWa822vaYKvoem9xVkTNrXCVqmDS9KYdhQrVv+rZwkK98eo6Rs2UcTo8obPxsfOpcWvF+Unoun+Ss20tPiGBf6KW1lX63BZkBrpOZ+w8UAH8OzazsQgru1n+aaNVyOlEHRTGTr+pYnvl3BJDy0dZZ72kmq/pzp7vi7Pclcrp9lnoX0UP1NX/J9LmTT+nk5sjNPg9xQ1+Qv1eduVs8oHWtTt+4R1rgFJB ubul@ubul-minty-vbox"
+      - path: "/home/cloud-user/.ssh/authorized_keys"
+        keyData: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN29QIMdObT7hSeDcmLNVFa50/pCAZ1Z7tY4D1KHusRL4BPCjVBa6pFVCwH1qNYgO8YaSgwlLHQyMre+ETU00coHMFflJZETeaFspqR75cwhvGvLH/dwvaqDLC3W2ABMGj+0WjIe04IofvJO5KZF9QO3AwpB4CxYtrZhTSS2Oin66lxgrm1Ar2l0EcyHqmllwodcSqubdvSHOUkgSXHDbC0PJinVmPZsS2ZOc6vTDOOIUgdWH/0ACyHk0hL51F65aQyAQ9UKwfBskqro9nfYmziUBKMJVxUR7hQvp7AnmA66Nn3hdECbnrjR7g3hQaLB6NXIhITsTV8NGWP/HWl03Ml05yStpQjaE1SqSLBmZIZxNnbppWXzdJZMICLMlTr20b9eJ6XhvUOdVCUBIwvOBJqH5vC+ZYLMRT9DKmQcoYMIYizz/mgouR4imZIAvEBCAnjU0Zt0SScKS6GB+PNkJq1MPPcWnEjhwOVrW6LqXmH0uKxegJNEBORTqcBuM7bcFKH7A5hjpoN8MvzCK6ooYmqQ4MfI52nZK4EImQI7r3ntJigX7DcfFRd36/t0JjJuli1CayZbAcFxZlEqQfCXxGfeswh3w9sTYvkoaFcq5ynoeBI4CiUMOLLdtSa63az8Nsq0G5M7vm9z7L84hZLSK6Hyzf2g/aQNpha1azkITDNw== jcook"
+      - path: "/home/cloud-user/.ssh/authorized_keys"
+        keyData: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDphSbKNCdwE38fvJURIwZU3jj/5KglOQzgxPxbYg4yTHoChNq/4pgHY3RqSdBiIWSTTPBYNXqvDQDHGCTEtMpas2N4eMxmlhaArRZKKC8xPBGzJrhZ3Q3Eyha0x92wqQ7CkFzM77THwNXm/+YEH3FUdl+YJif5uBBxuLqQ5GeoohtmYaxhUR/CCakDYbxIBXAt2wv/ud2MgwH2I/9oi7aBFgoKTMSX6rxAskEMpq6MtwOtnfSWgfSBMVDAk+GK3TQF0msPmnca2+vj4vBl0ufPFRTTL3uaoKWbWOflCPl65jx2sfC1VaspgEBI9XqrPN/cmmLYac/855XmunIqFcz+ndS+Gpwa7KAGKe2q5aTuEPiabC1rSyckOrUTCL9wrB3TVjW85ry3Ct8GuU8Qz32qqqiKODofwOmC4nh8Q6/NWP1KjS92o6fVmueTqJzfo5I2Cf3qV6qHTSsLR03X1W1c2q0o5XHyOaJjf0XMhOk6cG8MIxC2ZHQArBfHbex+MWXdFDvK79tcsixuudAB+jT5bsnXOEw8gjLh9aok5eqZ7bBQIFyygnChN6yntV/kwyts3gwM/Zd/PAj7B8vIBaxfRu8wyA9TK0sNCnbcTZrn2jQuYLxdxMCXvHvGFfJnGDER9nT/BsyNEBOUCueGoBxAeK8dDv3GSCDtfe6JW3eqrQ== nigel@Nigels-MBP"
+
+
