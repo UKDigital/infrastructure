@@ -14,7 +14,8 @@
   vars:
     azure_machine_spec:
       ep:
-        size: Standard_DS1_v2
+        size: Standard_DS1_v2,
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}ep01"
             interfaces:
@@ -29,6 +30,7 @@
         disk_size_gb: 5
       ns:
         size: Standard_DS1_v2
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}ns01"
             interfaces:
@@ -43,6 +45,7 @@
         disk_size_gb: 5
       alb:
         size: Standard_DS1_v2
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}alb01"
             interfaces:
@@ -57,6 +60,7 @@
         disk_size_gb: 5
       aom:
         size: Standard_E2s_v3
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}aom01"
             interfaces:
@@ -76,6 +80,7 @@
         disk_size_gb: 60
       aon:
         size: Standard_E2s_v3
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}aon01"
             interfaces:
@@ -90,6 +95,7 @@
         disk_size_gb: 60
       ipa:
         size: Standard_DS1_v2
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}ipa01"
             interfaces:
@@ -104,6 +110,7 @@
         disk_size_gb: 5
       mtr:
         size: Standard_DS1_v2
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}mtr01"
             interfaces:
@@ -124,6 +131,7 @@
         disk_size_gb: 5
       slb:
         size: Standard_DS1_v2
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}slb01"
             interfaces:
@@ -138,6 +146,7 @@
         disk_size_gb: 5
       som:
         size: Standard_E2s_v3
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}som01"
             interfaces:
@@ -157,6 +166,7 @@
         disk_size_gb: 60
       son:
         size: Standard_E2s_v3
+        os: rhel74
         instances:
           - hostname: "{{ azure_hostname_prefix }}son01"
             interfaces:
