@@ -27,15 +27,18 @@ azure_template_file: "{{ lookup('file', 'roles/dfe-azure/files/template.json') }
 azure_hostname_prefix: ukdigital
 
 azure_os_choices:
-  - publisher: RedHat
+  rhel73:
+    publisher: RedHat
     offer: RHEL
     sku: "7.3"
     version: latest
-  - publisher: RedHat
+  rhel74:
+    publisher: RedHat
     offer: RHEL
     sku: "7-RAW"  # Yes this is in fact 7.4
     version: latest
-  - publisher: OpenLogic
+  centos74:
+    publisher: OpenLogic
     offer: CentOS
     sku: "7.4"
     version: latest

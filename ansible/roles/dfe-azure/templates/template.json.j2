@@ -151,7 +151,7 @@
                             "storageAccountType": "Standard_LRS"
                         }
                     },
-                    "imageReference": {{ azure_os_choices[2] | to_nice_json(indent=4) }},
+                    "imageReference": {{ azure_os_choices[machine_spec.os] | to_nice_json(indent=4) }},
                     "dataDisks": [
                         {
                             "lun": 0,
