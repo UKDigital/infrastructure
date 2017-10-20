@@ -30,6 +30,9 @@ etcd
 nodes
 
 [OSEv3:vars]
+
+openshift_disable_check=disk_availability,docker_storage
+
 ansible_become=true
 deployment_type=openshift-enterprise
 containerized=true
@@ -37,24 +40,24 @@ openshift_clock_enabled=true
 os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
 
 openshift_master_cluster_method=native
-openshift_master_cluster_hostname=ukdigitalslb.{{ domain_name }}.test
-openshift_master_cluster_public_hostname=ukdigitalslb.{{ domain_name }}.test
-openshift_master_default_subdomain=svc.{{ domain_name }}.test
+openshift_master_cluster_hostname=ukdigitalsvc.paas.education.gov.uk.test
+openshift_master_cluster_public_hostname=ukdigitalsvc.paas.education.gov.uk.test
+openshift_master_default_subdomain=svc.paas.education.gov.uk.test
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
-ukdigitalsom01.{{ domain_name }}.test openshift_hostname=ukdigitalsom01.{{ domain_name }}.test ansible_host=10.100.20.21
-ukdigitalsom02.{{ domain_name }}.test openshift_hostname=ukdigitalsom02.{{ domain_name }}.test ansible_host=10.100.20.22
-ukdigitalsom03.{{ domain_name }}.test openshift_hostname=ukdigitalsom03.{{ domain_name }}.test ansible_host=10.100.20.23
+ukdigitalsom01.paas.education.gov.uk.test openshift_hostname=ukdigitalsom01.paas.education.gov.uk.test ansible_host=10.100.20.21
+ukdigitalsom02.paas.education.gov.uk.test openshift_hostname=ukdigitalsom02.paas.education.gov.uk.test ansible_host=10.100.20.22
+ukdigitalsom03.paas.education.gov.uk.test openshift_hostname=ukdigitalsom03.paas.education.gov.uk.test ansible_host=10.100.20.23
 
 [etcd]
-ukdigitalsom01.{{ domain_name }}.test ansible_host=10.100.1.21
-ukdigitalsom02.{{ domain_name }}.test ansible_host=10.100.1.22
-ukdigitalsom03.{{ domain_name }}.test ansible_host=10.100.1.23
+ukdigitalsom01.paas.education.gov.uk.test ansible_host=10.100.1.21
+ukdigitalsom02.paas.education.gov.uk.test ansible_host=10.100.1.22
+ukdigitalsom03.paas.education.gov.uk.test ansible_host=10.100.1.23
 
 [nodes]
-ukdigitalsom01.{{ domain_name }}.test ansible_host=10.100.20.21 openshift_hostname=ukdigitalsom01.{{ domain_name }}.test openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukdigitalsom02.{{ domain_name }}.test ansible_host=10.100.20.22 openshift_hostname=ukdigitalsom02.{{ domain_name }}.test openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukdigitalsom03.{{ domain_name }}.test ansible_host=10.100.20.23 openshift_hostname=ukdigitalsom03.{{ domain_name }}.test openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
-ukdigitalson01.{{ domain_name }}.test ansible_host=10.100.20.51 openshift_hostname=ukdigitalson01.{{ domain_name }}.test openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"
-ukdigitalson02.{{ domain_name }}.test ansible_host=10.100.20.52 openshift_hostname=ukdigitalson02.{{ domain_name }}.test openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"
+ukdigitalsom01.paas.education.gov.uk.test ansible_host=10.100.20.21 openshift_hostname=ukdigitalsom01.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ukdigitalsom02.paas.education.gov.uk.test ansible_host=10.100.20.22 openshift_hostname=ukdigitalsom02.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ukdigitalsom03.paas.education.gov.uk.test ansible_host=10.100.20.23 openshift_hostname=ukdigitalsom03.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+ukdigitalson01.paas.education.gov.uk.test ansible_host=10.100.20.51 openshift_hostname=ukdigitalson01.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"
+ukdigitalson02.paas.education.gov.uk.test ansible_host=10.100.20.52 openshift_hostname=ukdigitalson02.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'corsham1'}"

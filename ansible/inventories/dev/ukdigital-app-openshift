@@ -30,8 +30,11 @@ nodes
 etcd
 
 [OSEv3:vars]
+
+openshift_disable_check=disk_availability,docker_storage
+
 ansible_become=true
-openshift_deployment_type=openshift-enterprise
+deployment_type=openshift-enterprise
 containerized=true
 openshift_clock_enabled=true
 os_sdn_network_plugin_name='redhat/openshift-ovs-multitenant'
