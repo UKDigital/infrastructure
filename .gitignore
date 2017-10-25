@@ -3,5 +3,5 @@
 *.retry
 
 # Eliminate JetBrains project settings
-idea/
+.idea/
 
