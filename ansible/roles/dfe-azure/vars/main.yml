@@ -26,6 +26,7 @@ azure_template_file: "{{ lookup('file', 'roles/dfe-azure/files/template.json') }
 
 azure_hostname_prefix: ukdigital
 
+
 azure_os_choices:
   rhel73:
     publisher: RedHat
@@ -136,6 +137,16 @@ azure_nsg:
         destinationAddressPrefix: "*"
         access: "Allow"
         priority: 800
+        direction: "Inbound"
+    - name: "port-8443-from-vnet"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "8443"
+        sourceAddressPrefix: "10.100.0.0/16"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 700
         direction: "Inbound"
   aom:
     - name: "default-allow-ssh"

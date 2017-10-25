@@ -4,13 +4,9 @@
     - dfe-azure
 
   vars_prompt:
-    - name: ad_user
-      prompt: Azure AD user
-      default: "foo"
-    - name: ad_password
-      prompt: Azure AD password
-      default: 'bar'
-      private: yes
+    - name: azure_credential_profile
+      prompt: Section in ~/.azure/credentials file to use
+      default: "default"
   vars:
     azure_machine_spec:
       ep:
