@@ -40,6 +40,9 @@ openshift_master_cluster_method=native
 openshift_master_cluster_hostname=ukdigitalslb.{{ domain_name }}.test
 openshift_master_cluster_public_hostname=ukdigitalslb.{{ domain_name }}.test
 openshift_master_default_subdomain=svc.{{ domain_name }}.test
+
+openshift_hosted_registry_storage_kind=glusterfs
+
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
