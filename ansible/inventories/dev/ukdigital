@@ -41,6 +41,16 @@ ukdigitalipa02 ansible_host=10.100.100.12 iparole=replica
 ukdigital-mgmt-ipa-masters
 ukdigital-mgmt-ipa-replicas
 
+[ukdigital-mgmt-ipa2-masters]
+ukdigitalipa21 ansible_host=10.100.2.11 iparole=master
+
+[ukdigital-mgmt-ipa2-replicas]
+ukdigitalipa22 ansible_host=10.100.2.12 iparole=replica
+
+[ukdigital-mgmt-ipa2:children]
+ukdigital-mgmt-ipa2-masters
+ukdigital-mgmt-ipa2-replicas
+
 [ukdigital-app]
 ukdigitalalb01 ansible_host=10.100.1.5 pxyrole=MASTER
 ukdigitalalb02 ansible_host=10.100.1.6 pxyrole=BACKUP
@@ -55,6 +65,20 @@ ukdigitalaom02 ansible_host=10.100.1.22
 ukdigitalaom03 ansible_host=10.100.1.23
 ukdigitalaon01 ansible_host=10.100.1.51
 ukdigitalaon02 ansible_host=10.100.1.52
+
+[ukdigital-app2-openshift]
+ukdigitalaom21 ansible_host=10.100.2.21
+ukdigitalaom22 ansible_host=10.100.2.22
+ukdigitalaom23 ansible_host=10.100.2.23
+ukdigitalaon21 ansible_host=10.100.2.51
+ukdigitalaon22 ansible_host=10.100.2.52
+
+[ukdigital-app3-openshift]
+ukdigitalaom31 ansible_host=10.100.3.21
+ukdigitalaom32 ansible_host=10.100.3.22
+ukdigitalaom33 ansible_host=10.100.3.23
+ukdigitalaon31 ansible_host=10.100.3.51
+ukdigitalaon32 ansible_host=10.100.3.52
 
 [ukdigital-svc]
 ukdigitalslb01 ansible_host=10.100.20.5
