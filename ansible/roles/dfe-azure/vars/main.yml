@@ -473,16 +473,126 @@ azure_nsg:
         access: "Allow"
         priority: 1000
         direction: "Inbound"
+    - name: "port-8443-vnet-in"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "8443"
+        sourceAddressPrefix: "10.100.0.0/16"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 900
+        direction: "Inbound"
+    - name: "port-80-app-in"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "80"
+        sourceAddressPrefix: "10.100.1.0/24"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 800
+        direction: "Inbound"
+    - name: "port-443-app-in"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "443"
+        sourceAddressPrefix: "10.100.1.0/24"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 700
+        direction: "Inbound"
+    - name: "port-80-dmz-in"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "80"
+        sourceAddressPrefix: "10.100.253.0/28"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 600
+        direction: "Inbound"
+    - name: "port-443-dmz-in"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "443"
+        sourceAddressPrefix: "10.100.253.0/28"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 500
+        direction: "Inbound"
   som:
-    - name: "default-allow-ssh"
+    - name: "port-22-in-compartment"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "22"
+        sourceAddressPrefix: "10.100.0.0/16"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 1000
+        direction: "Inbound"
+    - name: "port-22-out-compartment"
       properties:
         protocol: "TCP"
         sourcePortRange: "*"
         destinationPortRange: "22"
         sourceAddressPrefix: "*"
+        destinationAddressPrefix: "10.100.0.0/16"
+        access: "Allow"
+        priority: 900
+        direction: "Outbound"
+    - name: "port-80-in-svc-compartment"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "80"
+        sourceAddressPrefix: "10.100.20.0/24"
         destinationAddressPrefix: "*"
         access: "Allow"
-        priority: 1000
+        priority: 800
+        direction: "Inbound"
+    - name: "port-8443-in-svc-compartment"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "8443"
+        sourceAddressPrefix: "10.100.20.0/24"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 700
+        direction: "Inbound"
+    - name: "port-9090-in-svc-compartment"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "9090"
+        sourceAddressPrefix: "10.100.20.0/24"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 600
+        direction: "Inbound"
+    - name: "port-80-in-app-compartment"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "80"
+        sourceAddressPrefix: "10.100.1.0/24"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 500
+        direction: "Inbound"
+    - name: "port-8443-in-app-compartment"
+      properties:
+        protocol: "TCP"
+        sourcePortRange: "*"
+        destinationPortRange: "8443"
+        sourceAddressPrefix: "10.100.1.0/24"
+        destinationAddressPrefix: "*"
+        access: "Allow"
+        priority: 400
         direction: "Inbound"
   son:
     - name: "port-22-in"
@@ -505,4 +615,5 @@ azure_nsg:
         access: "Allow"
         priority: 900
         direction: "Outbound"
+
 
