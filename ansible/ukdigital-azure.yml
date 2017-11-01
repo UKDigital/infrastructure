@@ -1,7 +1,7 @@
 
 - hosts: localhost
   roles:
-    - dfe-azure
+    - ukdigital-azure
 
   vars_prompt:
     - name: azure_credential_profile
@@ -10,8 +10,9 @@
   vars:
     azure_machine_spec:
       ep:
-        size: Standard_DS1_v2,
+        size: Standard_DS1_v2
         os: rhel74
+        load_balancer: epLB
         instances:
           - hostname: "{{ azure_hostname_prefix }}ep01"
             interfaces:
@@ -39,24 +40,25 @@
                 ipv4: "10.100.254.22"
                 public_ip: false
         disk_size_gb: 5
-      alb:
-        size: Standard_DS1_v2
-        os: rhel74
-        instances:
-          - hostname: "{{ azure_hostname_prefix }}alb01"
-            interfaces:
-              - subnet: app1subnet
-                ipv4: "10.100.1.5"
-                public_ip: true
-          - hostname: "{{ azure_hostname_prefix }}alb02"
-            interfaces:
-              - subnet: app1subnet
-                ipv4: "10.100.1.6"
-                public_ip: true
-        disk_size_gb: 5
+#      alb:
+#        size: Standard_DS1_v2
+#        os: rhel74
+#        instances:
+#          - hostname: "{{ azure_hostname_prefix }}alb01"
+#            interfaces:
+#              - subnet: app1subnet
+#                ipv4: "10.100.1.5"
+#                public_ip: true
+#          - hostname: "{{ azure_hostname_prefix }}alb02"
+#            interfaces:
+#              - subnet: app1subnet
+#                ipv4: "10.100.1.6"
+#                public_ip: true
+#        disk_size_gb: 5
       aom:
         size: Standard_E2s_v3
         os: rhel74
+        load_balancer: appLB
         instances:
           - hostname: "{{ azure_hostname_prefix }}aom01"
             interfaces:
@@ -125,24 +127,25 @@
                 ipv4: "172.17.1.5"
                 public_ip: false
         disk_size_gb: 5
-      slb:
-        size: Standard_DS1_v2
-        os: rhel74
-        instances:
-          - hostname: "{{ azure_hostname_prefix }}slb01"
-            interfaces:
-              - subnet: svc1subnet
-                ipv4: "10.100.20.5"
-                public_ip: true
-          - hostname: "{{ azure_hostname_prefix }}slb02"
-            interfaces:
-              - subnet: svc1subnet
-                ipv4: "10.100.20.6"
-                public_ip: true
-        disk_size_gb: 5
+#      slb:
+#        size: Standard_DS1_v2
+#        os: rhel74
+#        instances:
+#          - hostname: "{{ azure_hostname_prefix }}slb01"
+#            interfaces:
+#              - subnet: svc1subnet
+#                ipv4: "10.100.20.5"
+#                public_ip: true
+#          - hostname: "{{ azure_hostname_prefix }}slb02"
+#            interfaces:
+#              - subnet: svc1subnet
+#                ipv4: "10.100.20.6"
+#                public_ip: true
+#        disk_size_gb: 5
       som:
         size: Standard_E2s_v3
         os: rhel74
+        load_balancer: svcLB
         instances:
           - hostname: "{{ azure_hostname_prefix }}som01"
             interfaces:

@@ -91,7 +91,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: localhost
       roles:
-        - dfe-azure
+        - ukdigital-azure
 
       vars_prompt:
         - name: azure_credential_profile

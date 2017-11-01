@@ -1,20 +1,5 @@
 ---
-# vars file for dfe-azure
-
-## AD user
-#ad_user: ""
-#ad_password: ""
-#
-## Azure service principal
-#azure_profile: ""
-#azure_tenant: ""
-#
-## Azure subscription
-#azure_subscription: ""
-#
-## Azure location
-#azure_location: ""
-#
+# vars file for ukdigital-azure
 
 # OpenShift resource group
 azure_resource_group: "OpenShiftV3_{{ env }}"
@@ -22,10 +7,7 @@ azure_resource_group: "OpenShiftV3_{{ env }}"
 # public keys
 azure_deployment_public_keys: []
 
-azure_template_file: "{{ lookup('file', 'roles/dfe-azure/files/template.json') }}"
-
 azure_hostname_prefix: ukdigital
-
 
 azure_os_choices:
   rhel73:
@@ -616,4 +598,68 @@ azure_nsg:
         priority: 900
         direction: "Outbound"
 
-
+azure_lb:
+  epLB:
+    public_ip: true
+    private_ip: 10.100.254.11
+    subnet: dmz1subnet
+    probes:
+      - protocol: tcp
+        port: 80
+        name: probe1
+      - protocol: tcp
+        port: 443
+        name: probe2
+    ports:
+      - frontend: 80
+        backend: 80
+        protocol: tcp
+        probe: probe1
+      - frontend: 443
+        backend: 443
+        protocol: tcp
+        probe: probe2
+      - frontend: 1194
+        backend: 1194
+        protocol: udp
+        probe: false
+  appLB:
+    public_ip: true
+    private_ip: 10.100.254.12
+    subnet: dmz1subnet
+    probes:
+      - protocol: tcp
+        port: 80
+        name: probe1
+      - protocol: tcp
+        port: 443
+        name: probe2
+    ports:
+      - frontend: 80
+        backend: 80
+        protocol: tcp
+        probe: probe1
+      - frontend: 443
+        backend: 443
+        protocol: tcp
+        probe: probe2
+  svcLB:
+    public_ip: false
+    private_ip: 10.100.254.13
+    subnet: dmz1subnet
+    probes:
+      - protocol: tcp
+        port: 80
+        name: probe1
+      - protocol: tcp
+        port: 443
+        name: probe2
+    ports:
+      - frontend: 80
+        backend: 80
+        protocol: tcp
+        probe: probe1
+      - frontend: 443
+        backend: 443
+        protocol: tcp
+        probe: probe2

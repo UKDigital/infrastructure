@@ -1,7 +1,7 @@
 
 - hosts: localhost
   roles:
-    - dfe-azure
+    - ukdigital-azure
 
   vars_prompt:
     - name: azure_credential_profile
