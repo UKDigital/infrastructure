@@ -1,0 +1,37 @@
+
+[ukdigital-mgmt-mtr]
+mtr0.test ansible_host=10.100.100.15
+mtr1.test ansible_host=10.100.100.16
+
+[ukdigital-app-openshift]
+aom0.test, ansible_host=10.100.1.21
+aom1.test, ansible_host=10.100.1.22
+aom2.test, ansible_host=10.100.1.23
+aon0.test, ansible_host=10.100.1.51
+aon1.test, ansible_host=10.100.1.52
+
+[ukdigital-mgmt-ipa-masters]
+ipa0.test ansible_host=10.100.100.11
+
+[ukdigital-mgmt-ipa-replicas]
+ipa1.test ansible_host=10.100.100.12
+
+[ukdigital-mgmt-ipa:children]
+ukdigital-mgmt-ipa-masters
+ukdigital-mgmt-ipa-replicas
+
+[ukdigital-svc-openshift]
+som0.test ansible_host=10.100.20.21
+som1.test ansible_host=10.100.20.22
+som2.test ansible_host=10.100.20.23
+son0.test ansible_host=10.100.20.51
+son1.test ansible_host=10.100.20.52
+
+[ukdigital:children]
+ukdigital-mgmt-mtr
+ukdigital-mgmt-ipa
+ukdigital-app-openshift
+ukdigital-svc-openshift
+
+[ukdigital:vars]
+ansible_become=true

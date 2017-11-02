@@ -35,7 +35,6 @@
   - roles/ukdigital-openstack/files/*
 
 ##### VPN Servers #####
-
 - name: Create vpn security group
   os_security_group:
     name=vpn
