@@ -1,0 +1,64 @@
+{% macro vnet(name, location) -%}
+    {
+        "type": "Microsoft.Network/virtualNetworks",
+        "name": "{{ name }}",
+        "location": "{{ location }}",
+        "apiVersion": "2017-06-01",
+        "properties": {
+            "addressSpace": {
+                "addressPrefixes": [
+                    "10.100.0.0/16",
+                    "172.17.1.0/24"
+                ]
+            },
+            "subnets": [
+                {
+                    "name": "mtr1subnet",
+                    "properties": {
+                        "addressPrefix": "172.17.1.0/24"
+                    }
+                },
+                {
+                    "name": "app1subnet",
+                    "properties": {
+                        "addressPrefix": "10.100.1.0/24"
+                    }
+                },
+                {
+                    "name": "mgmt1subnet",
+                    "properties": {
+                        "addressPrefix": "10.100.100.0/24"
+                    }
+                },
+                {
+                    "name": "svc1subnet",
+                    "properties": {
+                        "addressPrefix": "10.100.20.0/24"
+                    }
+                },
+                {
+                    "name": "dmz1subnet",
+                    "properties": {
+                        "addressPrefix": "10.100.254.0/24"
+                    }
+                }
+            ],
+            "virtualNetworkPeerings": []
+        },
+        "dependsOn": []
+    }
+{%- endmacro %}
+
+{% macro id_vnet(name) -%}
+    {
+        "id": "[resourceId('Microsoft.Network/virtualNetworks', '{{ name }}')]"
+    }
+{%- endmacro %}
+
+{% macro depends_vnet(name) -%}"Microsoft.Network/virtualNetworks/{{ name }}"{%- endmacro %}
+
+{% macro id_subnet(vnet_name, name) -%}
+    {
+       "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', '{{ vnet_name }}', '{{ name }}')]"
+    }
+{%- endmacro %}

@@ -1,0 +1,18 @@
+---
+
+- name: Test DNS access in Azure
+  include_tasks: dns.yml
+
+- name: Template infrastructure
+  include_tasks: template.yml
+  tags:
+    - template
+    - estate
+  when: not azure_template_partial
+
+- name: Template partial infrastructure
+  include_tasks: partial_template.yml
+  tags:
+    - template
+    - estate
+  when: azure_template_partial

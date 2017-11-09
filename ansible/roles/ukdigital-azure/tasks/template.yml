@@ -1,0 +1,30 @@
+---
+
+- name: Rendering azure resource template
+  set_fact:
+    azure_rendered_template: "{{ lookup('template', 'templates/template.json.j2') }}"
+  when: not azure_check_mode
+  tags:
+    - render
+
+- name: Also to file
+  template:
+    src: "templates/template.json.j2"
+    dest: "./azuretemplate.json"
+  tags:
+    - render
+  when: azure_check_mode
+
+- name: Deploying template in {{ azure_resource_group }}
+  azure_rm_deployment:
+    deployment_name: "estate_{{ ansible_date_time.iso8601_basic_short }}"
+    location: "{{ azure_location }}"
+    resource_group: "{{ azure_resource_group }}"
+    template: "{{ azure_rendered_template }}"
+    parameters: {}
+    deployment_mode: complete
+  when: not azure_check_mode
+  tags:
+    - deploy
+
+
