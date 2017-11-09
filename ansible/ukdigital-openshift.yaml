@@ -71,7 +71,7 @@
     copy:
       src=files/resolv.conf dest=/etc/resolv.conf
 
-- import_playbook: ../../../openshift-ansible/playbooks/common/openshift-cluster/config.yml
+- import_playbook: ../../../openshift-ansible/playbooks/byo/config.yml
   vars:
     openshift_release: 3.6
     g_etcd_hosts:   "{{ groups.etcd | default([]) }}"

@@ -30,6 +30,8 @@ nodes
 etcd
 
 [OSEv3:vars]
+openshift_disable_check=disk_availability,docker_storage
+
 ansible_become=true
 deployment_type=openshift-enterprise
 containerized=true
@@ -58,5 +60,5 @@ ukdigitalaom31.paas.education.gov.uk.test ansible_host=10.100.3.21 openshift_hos
 ukdigitalaom32.paas.education.gov.uk.test ansible_host=10.100.3.22 openshift_hostname=ukdigitalaom32.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom32.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region2'}"
 ukdigitalaom33.paas.education.gov.uk.test ansible_host=10.100.3.23 openshift_hostname=ukdigitalaom33.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom33.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region1'}"
 
-ukdigitalaon31.paas.education.gov.uk.test ansible_host=10.100.3.51 openshift_hostname=ukdigitalaon01.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'region1'}"
-ukdigitalaon32.paas.education.gov.uk.test ansible_host=10.100.3.52 openshift_hostname=ukdigitalaon02.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'region2'}"
+ukdigitalaon31.paas.education.gov.uk.test ansible_host=10.100.3.51 openshift_hostname=ukdigitalaon31.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'region1'}"
+ukdigitalaon32.paas.education.gov.uk.test ansible_host=10.100.3.52 openshift_hostname=ukdigitalaon32.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'region2'}"

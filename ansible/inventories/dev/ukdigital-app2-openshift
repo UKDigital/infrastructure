@@ -30,6 +30,8 @@ nodes
 etcd
 
 [OSEv3:vars]
+openshift_disable_check=disk_availability,docker_storage
+
 ansible_become=true
 deployment_type=openshift-enterprise
 containerized=true
@@ -40,7 +42,7 @@ openshift_master_cluster_method=native
 openshift_master_cluster_hostname=ukdigitalapp2.paas.education.gov.uk.test
 openshift_master_cluster_public_hostname=ukdigitalapp2.paas.education.gov.uk.test
 
-openshift_master_default_subdomain=app2.paas.education.gov.uk
+openshift_master_default_subdomain=paas.education.gov.uk
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
 [masters]
@@ -54,9 +56,9 @@ ukdigitalaom22.paas.education.gov.uk.test ansible_host=10.100.2.22
 ukdigitalaom23.paas.education.gov.uk.test ansible_host=10.100.2.23
 
 [nodes]
-ukdigitalaom21.paas.education.gov.uk.test ansible_host=10.100.2.21 openshift_hostname=ukdigitalaom01.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom21.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region1'}"
-ukdigitalaom22.paas.education.gov.uk.test ansible_host=10.100.2.22 openshift_hostname=ukdigitalaom02.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom22.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region2'}"
-ukdigitalaom23.paas.education.gov.uk.test ansible_host=10.100.2.23 openshift_hostname=ukdigitalaom03.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom23.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region1'}"
+ukdigitalaom21.paas.education.gov.uk.test ansible_host=10.100.2.21 openshift_hostname=ukdigitalaom21.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom21.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region1'}"
+ukdigitalaom22.paas.education.gov.uk.test ansible_host=10.100.2.22 openshift_hostname=ukdigitalaom22.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom22.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region2'}"
+ukdigitalaom23.paas.education.gov.uk.test ansible_host=10.100.2.23 openshift_hostname=ukdigitalaom23.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom23.paas.education.gov.uk.test openshift_node_labels="{'region': 'infra', 'zone': 'region1'}"
 
 ukdigitalaon21.paas.education.gov.uk.test ansible_host=10.100.2.51 openshift_hostname=ukdigitalaon21.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'region1'}"
 ukdigitalaon22.paas.education.gov.uk.test ansible_host=10.100.2.52 openshift_hostname=ukdigitalaon22.paas.education.gov.uk.test openshift_node_labels="{'region': 'primary', 'zone': 'region2'}"
