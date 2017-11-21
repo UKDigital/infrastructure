@@ -45,6 +45,9 @@ openshift_master_cluster_public_hostname=ukdigitalapp3.paas.education.gov.uk.tes
 openshift_master_default_subdomain=paas.education.gov.uk
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 
+openshift_storage_glusterfs_namespace=gluster-storage
+openshift_storage_glusterfs_s3_deploy=false
+
 [masters]
 ukdigitalaom31.paas.education.gov.uk.test openshift_hostname=ukdigitalaom31.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom31.paas.education.gov.uk.test ansible_host=10.100.3.21
 ukdigitalaom32.paas.education.gov.uk.test openshift_hostname=ukdigitalaom32.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom32.paas.education.gov.uk.test ansible_host=10.100.3.22
