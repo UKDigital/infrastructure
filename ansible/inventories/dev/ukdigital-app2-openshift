@@ -46,7 +46,7 @@ openshift_master_cluster_hostname=ukdigitalapp2.paas.education.gov.uk.test
 openshift_master_cluster_public_hostname=ukdigitalapp2.paas.education.gov.uk.test
 
 openshift_master_default_subdomain=paas.education.gov.uk
-openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}, {'login': true, 'clientSecret': 'dummy', 'kind': 'OpenIDIdentityProvider', 'urls': {'authorize': 'https://login.microsoftonline.com/85b83002-909d-4eda-b2ae-34fcf1b956e6/oauth2/authorize', 'token': 'https://login.microsoftonline.com/85b83002-909d-4eda-b2ae-34fcf1b956e6/oauth2/token'}, 'claims': {'name': ['name'], 'preferredUsername': ['upn', 'unique_name'], 'email': ['email'], 'id': ['sub']}, 'clientID': 'dummy', 'mappingMethod': 'claim', 'challenge': false, 'name': 'msopenid'}]
 
 [masters]
 ukdigitalaom21.paas.education.gov.uk.test openshift_hostname=ukdigitalaom21.paas.education.gov.uk.test openshift_public_hostname=ukdigitalaom21.paas.education.gov.uk.test ansible_host=10.100.2.21
